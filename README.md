@@ -1,2 +1,2 @@
 # cuke-cpp
-A lightweight C++ Behavior-Driven Development (BDD) framework. It connects Gherkins parser and Cucumber server in the same executable to avoid the extra wiring layer in the original cucumber-cpp.
+cuke-cpp: A streamlined C++ Behavior-Driven Development (BDD) framework designed for high-performance environments. It optimizes the testing workflow by unifying the Gherkin parser and Cucumber server within a single executable, effectively eliminating the architectural overhead and complex wiring layers found in traditional cucumber-cpp implementations.
