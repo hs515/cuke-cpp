@@ -1,7 +1,6 @@
 .vscode
 bin
 build
-lib
 
 # Downloaded dependencies
 _deps

@@ -11,7 +11,6 @@ namespace cuke
 
         using StepMatchArg = std::pair<int, std::string>;
 
-        /// @brief Step definition matching info
         struct CucumberStepInfo 
         {
             std::string id;       // Step ID

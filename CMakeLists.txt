@@ -140,15 +140,6 @@ if(CUKE_CPP_FETCH_DEPS)
         set(TCLAP_INCLUDE_DIR ${tclap_SOURCE_DIR}/include)
     endif()
 
-    # Fetch Boost libraries required by the project
-    set(BOOST_INCLUDE_LIBRARIES filesystem;program_options;system;assert;any;core;config)
-    FetchContent_Declare(
-        boost
-        GIT_REPOSITORY https://github.com/boostorg/boost.git
-        GIT_TAG boost-1.86.0
-    )
-    FetchContent_MakeAvailable(boost)
-
     # Configure cucumber_cpp options before fetching
     set(CUKE_ENABLE_GTEST ON CACHE BOOL "Enable Google Test framework" FORCE)
     set(CUKE_ENABLE_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
@@ -161,20 +152,6 @@ if(CUKE_CPP_FETCH_DEPS)
         OVERRIDE_FIND_PACKAGE
     )
     FetchContent_MakeAvailable(cucumber_cpp)
-
-    
-
-# FetchContent_GetProperties(cucumber_cpp)
-    # if(NOT cucumber_cpp_POPULATED)
-    #    FetchContent_Populate(cucumber_cpp)
-
-    #     # The content is now downloaded to ${cucumber_cpp_SOURCE_DIR}
-    #     # You can now use the files directly (e.g., for header-only libs)
-    #     # Do NOT call FetchContent_MakeAvailable or add_subdirectory
-        
-    #     # Add cucumber_cpp include directories to the project
-    #     include_directories(${cucumber_cpp_SOURCE_DIR}/include)
-    # endif()
 
 endif()
 
