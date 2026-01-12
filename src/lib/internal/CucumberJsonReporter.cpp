@@ -33,6 +33,9 @@ void CucumberJsonReporter::executionEnd()
 {
     myJson["endTime"] = CucumberRunnable::now();
     myJson["duration"] = myJson["endTime"].get<uint64_t>() - myJson["startTime"].get<uint64_t>();
+    myJson["passedFeatures"] = myPassedFeatures;
+    myJson["failedFeatures"] = myFailedFeatures;
+    myJson["skippedFeatures"] = mySkippedFeatures;
 
     dumpReport();
 }
@@ -68,11 +71,15 @@ void CucumberJsonReporter::featureEnd(const CucumberFeature& feature)
     (*myFeatureNodePtr)["passedScenarios"] = myFeaturePassedScenarios;
     (*myFeatureNodePtr)["failedScenarios"] = myFeatureFailedScenarios;
     (*myFeatureNodePtr)["skippedScenarios"] = myFeatureSkippedScenarios;
+
+    if (feature.getStatus() == passed) myPassedFeatures++; 
+    else if (feature.getStatus() == failed) myFailedFeatures++; 
 }
 
 void CucumberJsonReporter::featureSkip(const CucumberFeature& feature)
 {
     featureBegin(feature);
+    mySkippedFeatures++;
     myFeatureSkippedScenarios = feature.getScenarios().size();
     featureEnd(feature);
 }
@@ -144,7 +151,7 @@ const json& CucumberJsonReporter::getJson() const
 
 void CucumberJsonReporter::dumpReport()
 {
-    const std::filesystem::path destDir("report");
+    const std::filesystem::path destDir("reports");
     if (!std::filesystem::exists(destDir))
     {
         std::filesystem::create_directories(destDir);

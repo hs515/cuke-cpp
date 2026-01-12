@@ -14,12 +14,12 @@ static void render(const std::filesystem::path& tmpl, const std::filesystem::pat
 
 void CucumberHtmlReporter::dumpReport()
 {
-    const std::filesystem::path srcDir("test/bdd/resources/report");
-    const std::filesystem::path destDir("report");
+    const std::filesystem::path srcDir("templates");
+    const std::filesystem::path destDir("reports");
 
-    if (!std::filesystem::exists(destDir))
+    if (!std::filesystem::exists(destDir / "features"))
     {
-        std::filesystem::create_directories(destDir);
+        std::filesystem::create_directories(destDir / "features");
     }
 
     // Generate features html
@@ -29,7 +29,9 @@ void CucumberHtmlReporter::dumpReport()
     {
         if (feature["featureScenarios"].size() != 0)
         {
-            auto featureDest = destDir / (feature["featureFileName"].get<std::string>() + ".html");
+            const std::filesystem::path filepath(feature["featureFileName"].get<std::string>());
+            const auto filename = filepath.filename().string() + ".html";
+            const auto featureDest = destDir / "features" / filename;
             render(srcDir / "feature.html", featureDest, feature);
         }
     }
@@ -68,7 +70,20 @@ static void copyAll(const std::filesystem::path& src, const std::filesystem::pat
 static void render(const std::filesystem::path& tmpl, const std::filesystem::path& html, const json& data)
 {
     std::ifstream in(tmpl.string());
+    if (!in.is_open())
+    {
+        std::cerr << "Cannot open template file: " << tmpl.string() << std::endl;
+        return;
+    }
+
     std::ofstream out(html.string());
+    if (!out.is_open())
+    {
+        std::cerr << "Cannot create html file: " << html.string() << std::endl;
+        in.close();
+        return;
+    }
+
     std::string line;
     while (std::getline(in, line))
     {

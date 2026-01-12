@@ -37,12 +37,15 @@ namespace cuke
         private:
             json myJson;
 
-            json* myFeatureNodePtr;
-            json* myScenarioNodePtr;
-            json* myStepNodePtr;
-            int myFeaturePassedScenarios;
-            int myFeatureFailedScenarios;
-            int myFeatureSkippedScenarios;
+            json* myFeatureNodePtr = nullptr;
+            json* myScenarioNodePtr = nullptr;
+            json* myStepNodePtr = nullptr;
+            int myPassedFeatures = 0;
+            int myFailedFeatures = 0;
+            int mySkippedFeatures = 0;
+            int myFeaturePassedScenarios = 0;
+            int myFeatureFailedScenarios = 0;
+            int myFeatureSkippedScenarios = 0;
         };
 
     } // namespace internal

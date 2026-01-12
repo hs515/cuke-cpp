@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Cypress Cucumber UI Test Automation - Execution Report</title>
+      <link rel="stylesheet" href="../css/bootstrap.min.css">
+      <link rel="stylesheet" href="../css/font-awesome.min.css">
+      <link rel="stylesheet" href="../css/feature.css">
+   </head>
+   <body>
+      <nav class="navbar" style="background-color: #6400A0; color:#fff">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a class="navbar-brand" href="../index.html">
+               <i class="fa fa-arrow-left" style="color:#fff"><span>Back</span></i>
+               </a>
+            </div>
+            <p class="navbar-text" style="float: left">Features Overview
+            </p>
+            <p class="navbar-text">Cucumber BDD Test Report</p>
+         </div>
+      </nav>
+      <div class="main_conainer">
+         <div class="page-title">
+            <div class="tags">
+               <i class="fa fa-tags fa-lg"></i>
+               <template>
+                  {{#featureTags}}
+                  <span class="tag">{{.}}</span>
+                  {{/featureTags}}
+               </template>
+            </div>
+            <h1>Feature:
+               <small><template>{{featureName}}</template></small>
+            </h1>
+            <p>
+            </p>
+            <p><strong>File name:</strong>
+               <template>{{featureFileName}}</template>
+            </p>
+         </div>
+         <div class="clearfix"></div>
+         <div class="row">
+            <div class="col-md-6 col-lg-6 col-xs-12">
+               <div class="x_panel fixed_height_320">
+                  <div class="x_title">
+                     <h2>Scenarios</h2>
+                     <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                           <a class="collapse-link">
+                           <i class="fa fa-chevron-up"></i>
+                           </a>
+                        </li>
+                     </ul>
+                     <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                     <table class="chart">
+                        <tbody>
+                           <tr>
+                              <th>
+                                 <p>Chart</p>
+                              </th>
+                              <th>
+                                 <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                    <p class="">Status</p>
+                                 </div>
+                                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+                                    <p class="" style="float:right;">Progress</p>
+                                 </div>
+                              </th>
+                           </tr>
+                           <tr>
+                              <td class="chart">
+                                 <canvas id="scenario-chart" width="140" height="140" style="display: block;"></canvas>
+                                 <div class="total"><template>{{totalScenarios}}</template></div>
+                              </td>
+                              <td>
+                                 <table class="tile_info">
+                                    <tbody>
+                                       <template>
+                                       <tr>
+                                          <td>
+                                             <p data-toggle="tooltip" data-placement="left" title="" data-original-title="Scenario passed">
+                                                <i class="fa fa-check-circle passed-color"></i>
+                                                Passed
+                                             </p>
+                                          </td>
+                                          <td class="percentage">{{passedScenariosPercent}} %</td>
+                                       </tr>
+                                       <tr>
+                                          <td>
+                                             <p data-toggle="tooltip" data-placement="left" title="" data-original-title="Scenario failed">
+                                                <i class="fa fa-exclamation-circle failed-color"></i>
+                                                Failed
+                                             </p>
+                                          </td>
+                                          <td class="percentage">{{failedScenariosPercent}} %</td>
+                                       </tr>
+                                       {{#skippedScenarios}}
+                                       <tr>
+                                          <td>
+                                             <p data-toggle="tooltip" data-placement="left" title="" data-original-title="Scenario is skipped">
+                                                <i class="fa fa-arrow-circle-right skipped-color"></i>
+                                                Skipped
+                                             </p>
+                                          </td>
+                                          <td class="percentage">{{skippedScenariosPercent}} %</td>
+                                       </tr>
+                                       {{/skippedScenarios}}
+                                    </template>
+                                    </tbody>
+                                 </table>
+                              </td>
+                           </tr>
+                           <tr>
+                              <th> Total duration:</th>
+                           </tr>
+                           <tr>
+                              <td><template>{{formattedTotalDuration}}</template></td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-6 col-xs-12">
+               <div class="x_panel fixed_height_320">
+                  <div class="x_title">
+                     <h2>Run info</h2>
+                     <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                           <a class="collapse-link">
+                           <i class="fa fa-chevron-up"></i>
+                           </a>
+                        </li>
+                     </ul>
+                     <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                     <div class="dashboard-widget-content">
+                        <table class="quick-list">
+                           <tbody>
+                              <tr>
+                                 <td class="meta-data-title">Execution Start Time</td>
+                                 <td class="meta-data-data"><template>{{executionStartTime}}</template></td>
+                              </tr>
+                              <tr>
+                                 <td class="meta-data-title">Execution End Time</td>
+                                 <td class="meta-data-data"><template>{{executionEndTime}}</template></td>
+                              </tr>
+                              <tr>
+                                 <td class="meta-data-title">Execution Run Time (hrs)</td>
+                                 <td class="meta-data-data"><template>{{executionRunTimeInHours}} hours</template></td>
+                              </tr>
+                              <tr>
+                                 <td class="meta-data-title">Execution Run Time (min)</td>
+                                 <td class="meta-data-data"><template>{{executionRunTimeInMins}} minutes</template></td>
+                              </tr>
+                              <tr>
+                                 <td class="meta-data-title">Execution Run Time (sec)</td>
+                                 <td class="meta-data-data"><template>{{executionRunTimeInSeconds}} seconds</template></td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="dropdown pull-right dropup">
+            <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown" style="margin-bottom: 15px;">
+            Filter By<span class="caret" style="margin-left: 5px"></span></button>
+            <ul class="dropdown-menu" id="fitler">
+               <li class=""> <a id="passed" href="javascript:void(0)" onclick="hideResult(this.id)">Passed
+                  <i class="fa fa-check-circle passed-color filter-i"></i></a>
+               </li>
+               <li class=""> <a id="failed" href="javascript:void(0)" onclick="hideResult(this.id)">Failed
+                  <i class="fa fa-exclamation-circle failed-color filter-i"></i></a>
+               </li>
+               <li class=""> <a id="pending" href="javascript:void(0)" onclick="hideResult(this.id)">Pending
+                  <i class="fa fa-minus-circle pending-color filter-i"></i></a>
+               </li>
+               <li> <a id="skipped" href="javascript:void(0)" onclick="hideResult(this.id)">Skipped
+                  <i class="fa fa-arrow-circle-right fa skipped-color filter-i"></i></a>
+               </li>
+               <li class=""> <a id="not-defined" href="javascript:void(0)" onclick="hideResult(this.id)">Not Defined
+                  <i class="fa fa-question-circle not-defined-color filter-i"></i></a>
+               </li>
+               <li class=""> <a id="ambiguous" href="javascript:void(0)" onclick="hideResult(this.id)">Ambiguous
+                  <i class="fa fa-flash ambiguous-color filter-i"></i></a>
+               </li>
+               <li class="divider"></li>
+               <li> <a id="clear" href="javascript:void(0)" onclick="showAll()">Clear
+                  <i class="fa fa-times-circle"></i></a>
+               </li>
+            </ul>
+         </div>
+         <div class="row">
+            <template>
+               {{#featureScenarios}}
+               <div class="col-md-12 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                     <div class="x_title">
+                        <div class="tags">
+                           <i class="fa fa-tags fa-lg"></i>
+                              {{#scenarioTags}}
+                              <span class="tag">{{.}}</span>
+                              {{/scenarioTags}}
+                        </div>
+                        <h2>Scenario: <small>{{scenarioName}}</small></h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                           <li>
+                              <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                           </li>
+                     {{#undefinedSteps}}
+                           <li><span class="step not-defined-background" data-toggle="tooltip" title="Undefined steps">{{undefinedSteps}}</span></li>
+						   {{/undefinedSteps}}
+                           </li>
+                     {{#ambiguousSteps}}
+                           <li><span class="step ambiguous-background" data-toggle="tooltip" title="Ambiguous steps">{{ambiguousSteps}}</span></li>
+						   {{/ambiguousSteps}}
+						   {{#skippedSteps}}
+                           <li><span class="step skipped-background" data-toggle="tooltip" title="Skipped steps">{{skippedSteps}}</span></li>
+						   {{/skippedSteps}}
+						   {{#failedSteps}}
+                           <li><span class="step failed-background" data-toggle="tooltip" title="Failed steps">{{failedSteps}}</span></li>
+						   {{/failedSteps}}
+						   {{#passedSteps}}
+                           <li><span class="step passed-background" data-toggle="tooltip" title="Passed steps">{{passedSteps}}</span></li>
+						   {{/passedSteps}}
+                           <li>
+                              <span style="font-size:1.2em"> Duration:</span>
+                              <span style="padding-right:5em">{{formattedDuration}}</span>
+                           </li>
+                           <li>
+                              <span style="font-size:1.2em"> Start:</span>
+                              <span style="padding-right:5em">{{startTime}}</span>
+                           </li>
+                           
+                        </ul>
+                        <div class="clearfix"></div>
+                     </div>
+                     <div class="x_content">
+                        {{#scenarioSteps}}
+                        <div class="scenario-step-container">
+                           <div class="label" data-toggle="tooltip" data-placement="top" title="{{statusText}}">
+                              <i class="fa fa-arrow-circle-right fa-2x {{statusText}}-color"></i>
+                           </div>
+                           <div class="text">
+                              <span class="keyword highlight">{{keyword}} </span>
+                              {{text}} {{#error}}<a href="#error{{id}}-error" data-toggle="collapse" class="" aria-expanded="true">+ Show Error</a>{{/error}}
+                              <span class="duration">{{formattedDuration}}</span>
+                           </div>
+                        </div>
+                        {{#error}}
+                        <div id="error{{id}}-error" class="scenario-step-collapse collapse" aria-expanded="false" style="height: 0px;">
+                           <pre class="info">{{error}}</pre>
+                        </div>
+                        {{/error}}
+                        {{/scenarioSteps}}
+                     </div>
+                  </div>
+               </div>
+               {{/featureScenarios}}
+            </template>
+         </div>
+      </div>
+      <div class="text-center">
+         <p class="text-center">Copyright &copy; 2026, GE HealthCare</p>
+      </div>
+      <!-- data -->
+      <script src="../js/jquery-3.2.1.min.js"></script>
+      <script src="../js/bootstrap.min.js"></script>
+      <script src="../js/Chart.min.js"></script>
+      <script src="../js/mustache.min.js"></script>
+      <script src="../js/feature.js"></script>
+   </body>
+</html>

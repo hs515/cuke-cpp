@@ -1,2 +1,2 @@
-This was inspired by Cuke4Nuke Calc sample
+This was inspired by Cucumber-cpp Calc sample
 
