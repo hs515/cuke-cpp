@@ -1,13 +1,26 @@
 #include "CucumberEventListener.hpp"
 
-#include <chrono>
+#include "CucumberConsoleReporter.hpp"
+#include "CucumberHtmlReporter.hpp"
+#include "CucumberJsonReporter.hpp"
+#include "ListenerOptions.hpp"
 
 using namespace cuke::internal;
 
-uint64_t CucumberEventListenerIF::now()
+CucumberEventListener::CucumberEventListener(const ListenerOptions& options)
 {
-    using namespace std::chrono;
-    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    if (options.consoleReport)
+    {
+        add(std::make_shared<CucumberConsoleReporter>());
+    }
+    if (options.jsonReport)
+    {
+        add(std::make_shared<CucumberJsonReporter>());
+    }
+    if (options.htmlReport)
+    {
+        add(std::make_shared<CucumberHtmlReporter>());
+    }
 }
 
 void CucumberEventListener::executionBegin()

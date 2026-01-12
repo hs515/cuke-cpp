@@ -18,12 +18,12 @@ using namespace cuke::internal;
 
 void CucumberConsoleReporter::executionBegin()
 {
-    myStartTime = now();
+    myStartTime = CucumberRunnable::now();
 }
 
 void CucumberConsoleReporter::executionEnd()
 {
-    uint64_t endTime = now();
+    uint64_t endTime = CucumberRunnable::now();
 
     int totalScenarios = myPassedScenarios + myFailedScenarios;
     std::cout << totalScenarios << " scenarios";

@@ -16,6 +16,12 @@ static bool iequals(const std::string& a, const std::string& b)
                       [](char a, char b) { return std::tolower(a) == std::tolower(b); });
 }
 
+uint64_t CucumberRunnable::now()
+{
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+
 void CucumberRunnable::setStatus(CucumberExecutionStatus status)
 {
     myStatus = status;
@@ -44,12 +50,6 @@ void CucumberRunnable::setEndTime()
 uint64_t CucumberRunnable::getEndTime() const
 {
     return myEndTime;
-}
-
-uint64_t CucumberRunnable::now() const
-{
-    using namespace std::chrono;
-    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
 void CucumberStep::setStepDefs(const std::vector<CucumberStepInfo>& stepDefs)

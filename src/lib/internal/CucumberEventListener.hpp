@@ -11,6 +11,7 @@ namespace cuke
         class CucumberFeature;
         class CucumberScenario;
         class CucumberStep;
+        class ListenerOptions;
 
         class CucumberEventListenerIF
         {
@@ -26,13 +27,13 @@ namespace cuke
             virtual void stepBegin(const CucumberStep& step) = 0;
             virtual void stepSkip(const CucumberStep& step) = 0;
             virtual void stepEnd(const CucumberStep& step) = 0;
-
-            static uint64_t now(); 
         };
 
         class CucumberEventListener : public CucumberEventListenerIF
         {
         public:
+            explicit CucumberEventListener(const ListenerOptions& options);
+
             void executionBegin() override;
             void executionEnd() override;
             void featureBegin(const CucumberFeature& feature) override;
@@ -45,9 +46,9 @@ namespace cuke
             void stepEnd(const CucumberStep& step) override;
             void stepSkip(const CucumberStep& step) override;
 
+        private:
             void add(std::shared_ptr<CucumberEventListenerIF> listener);
 
-        private:
             std::vector<std::shared_ptr<CucumberEventListenerIF>> myListeners;
         };
 

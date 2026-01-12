@@ -12,7 +12,10 @@ namespace cuke
         struct ListenerOptions 
         {
             bool consoleReport = false;
+            bool jsonReport = false;
             bool htmlReport = false;
+
+            void parse(int ac, char** av);
         };
 
     } // namespace internal

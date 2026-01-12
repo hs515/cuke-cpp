@@ -1,21 +1,10 @@
 #include "CukeRunner.hpp"
 
-#include "CucumberConsoleReporter.hpp"
-#include "CucumberHtmlReporter.hpp"
-
 using namespace cuke::internal;
 
-CukeRunner::CukeRunner(const ListenerOptions& options)
+CukeRunner::CukeRunner(const ListenerOptions& options) :
+    myEventListener(options)
 {
-    if (options.consoleReport)
-    {
-        myEventListener.add(std::make_shared<CucumberConsoleReporter>());
-    }
-    if (options.htmlReport)
-    {
-        myEventListener.add(std::make_shared<CucumberHtmlReporter>());
-    }
-
     myEventListener.executionBegin();
 }
 

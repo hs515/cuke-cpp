@@ -31,24 +31,6 @@ static void parse_helper_options(int ac, char** av)
     }
 }
 
-static ListenerOptions parse_listener_options(int ac, char**av)
-{
-    ListenerOptions opts;
-    for (int i = 1; i < ac; ++i) {
-        std::string_view arg(av[i]);
-
-        if ((arg == "--verbose") || (arg == "-V"))
-        {
-            opts.consoleReport = true;
-        }
-        else if (arg == "--html")
-        {
-            opts.htmlReport = true;
-        }
-    }
-    return opts;
-}
-
 static std::vector<std::string> parse_feature_files(int ac, char** av)
 {
     std::vector<std::string> featureFiles;
@@ -146,7 +128,8 @@ int main(int argc, char** argv)
     std::vector<std::string> tags = parse_filter_tags(argc, argv);
 
     // Collect listener options
-    ListenerOptions listenerOptions = parse_listener_options(argc, argv);
+    ListenerOptions listenerOptions;
+    listenerOptions.parse(argc, argv);
 
     try 
     {

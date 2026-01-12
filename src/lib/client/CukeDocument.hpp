@@ -30,6 +30,8 @@ namespace cuke
         class CucumberRunnable
         {
         public:
+            static uint64_t now();
+
             void setStatus(CucumberExecutionStatus status);
             CucumberExecutionStatus getStatus() const;
             void setStartTime();
@@ -41,7 +43,6 @@ namespace cuke
             virtual void skip(CucumberRunner& runner) = 0;
 
         private:
-            uint64_t now() const;
             CucumberExecutionStatus myStatus = pending;
             uint64_t myStartTime = 0;
             uint64_t myEndTime = 0;

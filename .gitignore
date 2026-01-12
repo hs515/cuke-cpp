@@ -1,6 +1,7 @@
 .vscode
 bin
 build
+**/report
 
 # Downloaded dependencies
 _deps

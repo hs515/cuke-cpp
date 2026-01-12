@@ -20,9 +20,12 @@ set(CUKE_CPP_LIB_SOURCES
     internal/CucumberEventListener.hpp
     internal/CucumberHtmlReporter.cpp
     internal/CucumberHtmlReporter.hpp
+    internal/CucumberJsonReporter.cpp
+    internal/CucumberJsonReporter.hpp
     internal/CucumberStepInfo.hpp
     internal/CukeRunner.cpp
     internal/CukeRunner.hpp
+    internal/ListenerOptions.cpp
     internal/ListenerOptions.hpp
     server/CukeServer.cpp
     server/CukeServer.hpp

@@ -2,11 +2,9 @@
 
 #include "CucumberEventListener.hpp"
 
-#include <memory>
-#include <iostream>
-#include <string>
+#include <nlohmann/json.hpp>
 
-namespace cuke 
+namespace cuke
 {
     namespace internal
     {
@@ -15,18 +13,9 @@ namespace cuke
         class CucumberScenario;
         class CucumberStep;
 
-        class Indent
-        {
-        public:
-            Indent(int value) : myValue(value) {}
-        private:
-            int myValue;
-            friend std::ostream& operator<<(std::ostream& os, const Indent& indent);
-        };
+        using json = nlohmann::json;
 
-        std::ostream& operator<<(std::ostream& os, const Indent& indent);
-
-        class CucumberConsoleReporter : public CucumberEventListenerIF
+        class CucumberJsonReporter : public CucumberEventListenerIF
         {
         public:
             void executionBegin() override;
@@ -41,16 +30,19 @@ namespace cuke
             void stepEnd(const CucumberStep& step) override;
             void stepSkip(const CucumberStep& step) override;
 
-        private:
-            uint64_t myStartTime = 0;
-            bool myScenarioSkipped = false;
+        protected:
+            virtual const json& getJson() const;
+            virtual void dumpReport();
 
-            int myPassedScenarios = 0;
-            int myFailedScenarios = 0;
-            int myPassedSteps = 0;
-            int myFailedSteps = 0;
-            int myUndefSteps = 0;
-            int mySkippedSteps = 0;
+        private:
+            json myJson;
+
+            json* myFeatureNodePtr;
+            json* myScenarioNodePtr;
+            json* myStepNodePtr;
+            int myFeaturePassedScenarios;
+            int myFeatureFailedScenarios;
+            int myFeatureSkippedScenarios;
         };
 
     } // namespace internal
