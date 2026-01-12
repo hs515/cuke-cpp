@@ -65,7 +65,7 @@ static std::vector<std::string> parse_feature_files(int ac, char** av)
             foundFeatureOption = false;
             continue;
         }
-        else // if (foundFeatureOption)
+        else if (foundFeatureOption)
         {
             fs::path featurePath(arg);
             if (!fs::exists(featurePath))

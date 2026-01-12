@@ -117,7 +117,8 @@ void CucumberConsoleReporter::stepEnd(const CucumberStep& step)
     else if (step.getStatus() == failed)
     {
         myFailedSteps++;
-        std::cout << Indent(4) << RED << step.getAction() << " " << step.getError() << RST << std::endl;
+        std::cout << Indent(4) << RED << step.getAction() << " " << step.getText() << RST;
+        std::cout << GRY << " # " << step.getStepDefs().at(0).source << RST << std::endl;
     }
     else if (step.getStatus() == ambiguous)
     {

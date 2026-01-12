@@ -219,10 +219,6 @@ bool CucumberFeature::run(CucumberBackend& backend, const std::vector<std::strin
     {
         skip(backend);
     }
-    else if (filterTags.size() > 0 && !hasAnyTag(filterTags))
-    {
-        skip(backend);
-    }
     else
     {
         for (auto&& scenario : getScenarios())

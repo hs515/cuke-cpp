@@ -21,7 +21,7 @@ void CukeBuilder::buildFeature(CucumberFeature& feature, const std::string& file
             buildScenario(scenario, m);
             feature.addScenario(scenario);
         },
-        .error = [&](const auto& m) { std::cout << m.to_json() << std::endl; }
+        .error = [&](const auto& m) {}
     };
 
     app.include_source(true);
