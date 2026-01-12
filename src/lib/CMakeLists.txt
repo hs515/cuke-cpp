@@ -29,28 +29,11 @@ set(CUKE_CPP_LIB_SOURCES
 )
 
 target_sources(
-    cukecpp_lib
-    PRIVATE
-        internal/main.cpp
-)
-
-target_sources(
     cukecpp_lib_nomain
     PRIVATE
         ${CUKE_CPP_LIB_SOURCES}
 )
 
-message(STATUS "cucumber cpp build directory is: ${cucumber_cpp_BINARY_DIR}")
-target_include_directories(
-    cukecpp_lib
-    PUBLIC
-        $<BUILD_INTERFACE:${CUKE_CPP_LIB_INC_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cucumber>
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${cucumber_cpp_SOURCE_DIR}/include
-        ${cucumber_cpp_BINARY_DIR}/src # for generated export files, e.g., CukeCppExport.hpp
-)
-
 target_include_directories(
     cukecpp_lib_nomain
     PUBLIC
@@ -59,12 +42,6 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${cucumber_cpp_SOURCE_DIR}/include
         ${cucumber_cpp_BINARY_DIR}/src # for generated export files, e.g., CukeCppExport.hpp
-)
-
-target_link_libraries(
-    cukecpp_lib
-    PUBLIC
-        cucumber::cukecpp_nomain
 )
 
 target_link_libraries(
@@ -75,16 +52,6 @@ target_link_libraries(
 )
 
 set_target_properties(
-    cukecpp_lib
-    PROPERTIES
-        CXX_STANDARD 17 
-        VERSION ${VERSION}
-        SOVERSION ${VER_MAJOR}
-        EXPORT_NAME cukecpp
-        OUTPUT_NAME cukecpp
-)
-
-set_target_properties(
     cukecpp_lib_nomain
     PROPERTIES
         CXX_STANDARD 17 
@@ -92,4 +59,26 @@ set_target_properties(
         SOVERSION ${VER_MAJOR}
         EXPORT_NAME cukecpp_nomain
         OUTPUT_NAME cukecpp_nomain
+)
+
+target_sources(
+    cukecpp_lib
+    PRIVATE
+        internal/main.cpp
+)
+
+target_link_libraries(
+    cukecpp_lib
+    PUBLIC
+        cucumber::cukecpp_nomain
+)
+
+set_target_properties(
+    cukecpp_lib
+    PROPERTIES
+        CXX_STANDARD 17 
+        VERSION ${VERSION}
+        SOVERSION ${VER_MAJOR}
+        EXPORT_NAME cukecpp
+        OUTPUT_NAME cukecpp
 )
