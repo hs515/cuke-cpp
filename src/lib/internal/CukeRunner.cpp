@@ -73,12 +73,20 @@ void CukeRunner::endStep(const CucumberStep& step)
 bool CukeRunner::invokeStep(const CucumberStep& step, std::string& error)
 {
     auto stepInfo = step.getStepDefs().at(0);
-    std::vector<std::string> args;
-    for (auto&& argPair : stepInfo.args)
+    bool success = true;
+    if (step.getArgType() == "DocString")
     {
-        args.emplace_back(argPair.second);
+        success = myCukeServer.invoke(stepInfo.id, step.getDocStringArg(), error);
     }
-    bool success = myCukeServer.invoke(stepInfo.id, args, error);
+    else // if (step.getArgType() == "DataTable")
+    {
+        std::vector<std::string> args;
+        for (auto&& argPair : stepInfo.args)
+        {
+            args.emplace_back(argPair.second);
+        }
+        success = myCukeServer.invoke(stepInfo.id, args, error);
+    }
     return success;
 }
 

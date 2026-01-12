@@ -31,7 +31,6 @@ set(CUKE_CPP_LIB_SOURCES
 target_sources(
     cukecpp_lib
     PRIVATE
-        ${CUKE_CPP_LIB_SOURCES}
         internal/main.cpp
 )
 
@@ -65,8 +64,7 @@ target_include_directories(
 target_link_libraries(
     cukecpp_lib
     PUBLIC
-        cucumber::gherkin
-        cucumber-cpp-internal
+        cucumber::cukecpp_nomain
 )
 
 target_link_libraries(

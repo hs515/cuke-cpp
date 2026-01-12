@@ -84,6 +84,22 @@ void CukeServer::endScenario(const std::vector<std::string>& tags) const
     handle(request.dump());
 }
 
+bool CukeServer::invoke(const std::string& stepId, const std::string& arg, std::string& error) const
+{
+    json request = json::array();
+    json payload;
+    payload["id"] = stepId;
+    payload["args"] = arg;
+    request.emplace_back("invoke");
+    request.emplace_back(payload);
+
+    json response = json::parse(handle(request.dump()));
+
+    bool success = response[0].get<std::string>() == "success";
+    error = (success) ? "" : response[1]["message"].get<std::string>();
+    return success;
+}
+
 bool CukeServer::invoke(const std::string& stepId, const std::vector<std::string>& args, std::string& error) const
 {
     json jsonArgs = json::array();

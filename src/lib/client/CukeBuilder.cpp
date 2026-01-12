@@ -95,13 +95,13 @@ void CukeBuilder::buildStep(CucumberStep& step, const cms::pickle_step& pickleSt
                 }
                 tableArg.emplace_back(tableRow);
             }
-            step.setArgType("Cucumber::Term::Table");
+            step.setArgType("DataTable");
             step.setTableArg(tableArg);
         }
         else if (argument.doc_string.has_value())
         {
             const auto& msgDocString = argument.doc_string.value();
-            step.setArgType("Cucumber::Core::Ast::DocString");
+            step.setArgType("DocString");
             step.setDocStringArg(msgDocString.content);
         }
     }

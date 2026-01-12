@@ -38,6 +38,13 @@ namespace cuke
 
             /// @brief Invoke step definition
             /// @param stepId 
+            /// @param arg invoke argument
+            /// @param error set to the error message if invoke failed
+            /// @return true if invoke successfully, otherwise false
+            bool invoke(const std::string& stepId, const std::string& arg, std::string& error) const;
+
+            /// @brief Invoke step definition
+            /// @param stepId 
             /// @param args invoke argument
             /// @param error set to the error message if invoke failed
             /// @return true if invoke successfully, otherwise false
