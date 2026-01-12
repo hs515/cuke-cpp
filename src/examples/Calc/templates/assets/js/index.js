@@ -79,6 +79,9 @@ $(document).ready(function () {
     data.executionRunTimeInMins = (duration / 60000).toFixed(2);
     data.executionRunTimeInSeconds = (duration / 1000).toFixed(2);
 
+    data.copyrightYear = new Date().getFullYear();
+    data.copyrightOrganization = "XXX LLC.";
+    
     $('template').each(function() {
         let html = Mustache.render($(this).html(), data);
         $(this).replaceWith(html);

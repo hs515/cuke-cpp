@@ -15,6 +15,7 @@ static void print_help()
                  "  --feature <path>       Path to feature file or directory containing feature files\n"
                  "  --tags <tag1> <tag2>   Tags to filter scenarios\n"
                  "  -V, --verbose          Enable verbose output from test run\n"
+                 "  --json                 Generate JSON report from test run\n"
                  "  --html                 Generate HTML report from test run\n"
               << std::endl;
 }

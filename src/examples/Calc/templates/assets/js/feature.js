@@ -34,6 +34,9 @@ $(document).ready(function() {
     data.executionRunTimeInMins = (duration / 60000).toFixed(2);
     data.executionRunTimeInSeconds = (duration / 1000).toFixed(2);
 
+    data.copyrightYear = new Date().getFullYear();
+    data.copyrightOrganization = "XXX LLC.";
+
     data.featureScenarios.forEach((scenario, scenarioIndex) => {
         scenario.passedSteps = 0;
         scenario.failedSteps = 0;
