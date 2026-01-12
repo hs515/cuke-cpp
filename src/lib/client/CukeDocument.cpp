@@ -1,7 +1,7 @@
 #include "CukeDocument.hpp"
 
 #include "CukeBuilder.hpp"
-#include "internal/CucumberBackend.hpp"
+#include "internal/CucumberRunner.hpp"
 
 #include <cctype>
 #include <chrono>
@@ -92,9 +92,14 @@ std::string CucumberStep::getError() const
     return myError;
 }
 
-bool CucumberStep::hasTableArg() const
+void CucumberStep::setArgType(const std::string& type)
 {
-    return !myTableArg.empty();
+    myArgType = type;
+}
+
+std::string CucumberStep::getArgType() const
+{
+    return myArgType;
 }
 
 void CucumberStep::setTableArg(const CucumberTableArg& tableArg)
@@ -105,6 +110,16 @@ void CucumberStep::setTableArg(const CucumberTableArg& tableArg)
 const CucumberTableArg& CucumberStep::getTableArg() const
 {
     return myTableArg;
+}
+
+void CucumberStep::setDocStringArg(const std::string& docString)
+{
+    myDocStringArg = docString;
+}
+
+std::string CucumberStep::getDocStringArg() const
+{
+    return myDocStringArg;
 }
 
 void CucumberTaggable::setName(const std::string& name)
@@ -141,7 +156,7 @@ bool CucumberTaggable::hasTag(const std::string& tagName) const
 
 bool CucumberTaggable::hasWip() const
 {
-    return hasTag("@WIP");
+    return hasTag("@WIP") || hasTag("@IGNORE") || hasTag("@SKIP");
 }
 
 bool CucumberTaggable::hasAnyTag(const std::vector<std::string>& tags) const
@@ -209,53 +224,53 @@ CucumberFeature::CucumberFeature(const std::string& filename)
     CukeBuilder::buildFeature(*this, filename);
 }
 
-bool CucumberFeature::run(CucumberBackend& backend, const std::vector<std::string>& filterTags)
+bool CucumberFeature::run(CucumberRunner& runner, const std::vector<std::string>& filterTags)
 {
     setStartTime();
-    backend.beginFeature(*this);
+    runner.beginFeature(*this);
 
     bool runningOk = true;
     if (hasWip())
     {
-        skip(backend);
+        skip(runner);
     }
     else
     {
         for (auto&& scenario : getScenarios())
         {
-            runningOk = scenario.run(backend, filterTags) && runningOk;
+            runningOk = scenario.run(runner, filterTags) && runningOk;
         }
         setStatus(runningOk ? passed : failed);
     }
 
     setEndTime();
-    backend.endFeature(*this);
+    runner.endFeature(*this);
     return runningOk;
 }
 
-void CucumberFeature::skip(CucumberBackend& backend)
+void CucumberFeature::skip(CucumberRunner& runner)
 {
     setStatus(skipped);
-    backend.skipFeature(*this);
+    runner.skipFeature(*this);
     for (auto&& scenario : myScenarios)
     {
-        scenario.skip(backend);
+        scenario.skip(runner);
     }
 }
 
-bool CucumberScenario::run(CucumberBackend& backend, const std::vector<std::string>& filterTags)
+bool CucumberScenario::run(CucumberRunner& runner, const std::vector<std::string>& filterTags)
 {
     setStartTime();
-    backend.beginScenario(*this);
+    runner.beginScenario(*this);
 
     bool runningOk = true;
     if (hasWip())
     {
-        skip(backend);
+        skip(runner);
     }
     else if (filterTags.size() > 0 && !hasAnyTag(filterTags))
     {
-        skip(backend);
+        skip(runner);
     }
     else
     {
@@ -263,51 +278,53 @@ bool CucumberScenario::run(CucumberBackend& backend, const std::vector<std::stri
         {
             if (runningOk) 
             {
-                runningOk = step.run(backend, filterTags);
+                runningOk = step.run(runner, filterTags);
             }
             else
             {
-                step.skip(backend);
+                step.skip(runner);
             }
         }
         setStatus(runningOk ? passed : failed);
     }
 
     setEndTime();
-    backend.endScenario(*this);
+    runner.endScenario(*this);
     return runningOk;
 }
 
-void CucumberScenario::skip(CucumberBackend& backend)
+void CucumberScenario::skip(CucumberRunner& runner)
 {
     setStatus(skipped);
-    backend.skipScenario(*this);
+    runner.skipScenario(*this);
     for (auto&& step : mySteps)
     {
-        step.skip(backend);
+        step.skip(runner);
     }
 }
 
-bool CucumberStep::run(CucumberBackend& backend, const std::vector<std::string>& filterTags)
+bool CucumberStep::run(CucumberRunner& runner, const std::vector<std::string>& filterTags)
 {
     setStartTime();
-    backend.beginStep(*this);
+    runner.beginStep(*this);
 
-    auto stepDefs = backend.stepMatch(getText()); // Update step definitions
+    auto stepDefs = runner.stepMatch(getText()); // Update step definitions
     setStepDefs(stepDefs);
 
     if (getStepDefs().size() == 0) // Handling undefined step definition
     {
         setStatus(undefined);
+        std::string error = runner.snippetStep(*this);
+        setError(error);
     }
-    else if (getStepDefs().size() > 1)  // Handling ambiguous step definitions
+    else if (getStepDefs().size() > 1) // Handling ambiguous step definitions
     {
         setStatus(ambiguous);
     }
     else // Good
     {
         std::string error;
-        if (backend.invokeStep(*this, error))
+        if (runner.invokeStep(*this, error))
         {
             setStatus(passed);
         }
@@ -319,14 +336,14 @@ bool CucumberStep::run(CucumberBackend& backend, const std::vector<std::string>&
     }
 
     setEndTime();
-    backend.endStep(*this);
+    runner.endStep(*this);
     return getStatus() == passed;
 }
 
-void CucumberStep::skip(CucumberBackend& backend)
+void CucumberStep::skip(CucumberRunner& runner)
 {
     setStatus(skipped);
-    backend.skipStep(*this);
+    runner.skipStep(*this);
 }
 
 // void CucumberRunner::run(const std::string& file, const std::vector<std::string>& filterTags, bool& ok)
@@ -386,7 +403,7 @@ void CucumberStep::skip(CucumberBackend& backend)
 //         {
 //             auto cucumberStep = std::make_shared<CucumberStep>(step);
 //             auto text = cucumberStep->getText();
-//             auto stepDefs = myCucumberBackend.stepMatch(text);
+//             auto stepDefs = myCucumberRunner.stepMatch(text);
 //             cucumberStep->setStepDefs(stepDefs);
 //             scenario->getSteps().emplace_back(cucumberStep);
 //             step++;
@@ -460,7 +477,7 @@ void CucumberStep::skip(CucumberBackend& backend)
 //     scenario->startTime = CucumberEventListenerIF::now();
 //     myListener.scenarioBegin(*scenario);
 
-//     myCucumberBackend.beginScenario(scenario->getTags());
+//     myCucumberRunner.beginScenario(scenario->getTags());
 //     bool runningOk = true;
 //     for (auto&& step : scenario->getSteps())
 //     {
@@ -473,7 +490,7 @@ void CucumberStep::skip(CucumberBackend& backend)
 //             skipStep(step);
 //         }
 //     }
-//     myCucumberBackend.endScenario(scenario->getTags());
+//     myCucumberRunner.endScenario(scenario->getTags());
 
 //     scenario->setStatus(runningOk ? passed : failed);
 //     scenario->endTime = CucumberEventListenerIF::now();
@@ -514,7 +531,7 @@ void CucumberStep::skip(CucumberBackend& backend)
 //         }
 
 //         std::string error;
-//         if (myCucumberBackend.invoke(stepInfo->id, args, error))
+//         if (myCucumberRunner.invoke(stepInfo->id, args, error))
 //         {
 //             step->setStatus(passed);
 //         }

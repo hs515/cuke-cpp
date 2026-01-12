@@ -19,7 +19,7 @@ namespace cuke
         using WireProtocolHandler = cucumber::internal::WireProtocolHandler;
         using CucumberStepInfo = cuke::internal::CucumberStepInfo;
 
-        /// @brief CucumberCpp backend handler over Wire Protocol
+        /// @brief CucumberCpp runner handler over Wire Protocol
         class CukeServer
         {
         public:
@@ -32,16 +32,16 @@ namespace cuke
             /// @param tags a vector of tags associated with a scenario
             void beginScenario(const std::vector<std::string>& tags) const;
 
+            /// @brief Fire end-scenario hooks
+            /// @param tags 
+            void endScenario(const std::vector<std::string>& tags) const;
+
             /// @brief Invoke step definition
             /// @param stepId 
             /// @param args invoke argument
             /// @param error set to the error message if invoke failed
             /// @return true if invoke successfully, otherwise false
             bool invoke(const std::string& stepId, const std::vector<std::string>& args, std::string& error) const;
-
-            /// @brief Fire end-scenario hooks
-            /// @param tags 
-            void endScenario(const std::vector<std::string>& tags) const;
 
             /// @brief Fetch snippet text
             /// @param stepAction can be Given, When or Then

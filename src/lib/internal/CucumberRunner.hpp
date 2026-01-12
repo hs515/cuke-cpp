@@ -13,10 +13,10 @@ namespace cuke
         class CucumberScenario;
         class CucumberStep;
 
-        class CucumberBackend
+        class CucumberRunner
         {
         public:
-            virtual ~CucumberBackend() = default;
+            virtual ~CucumberRunner() = default;
             virtual void beginFeature(const CucumberFeature& feature) = 0;
             virtual void skipFeature(const CucumberFeature& feature) = 0;
             virtual void endFeature(const CucumberFeature& feature) = 0;
@@ -27,6 +27,7 @@ namespace cuke
             virtual void skipStep(const CucumberStep& step) = 0;
             virtual void endStep(const CucumberStep& step) = 0;
             virtual bool invokeStep(const CucumberStep& step, std::string& error) = 0;
+            virtual std::string snippetStep(const CucumberStep& step) = 0;
             virtual std::vector<CucumberStepInfo> stepMatch(const std::string& stepText) = 0;
         };
 

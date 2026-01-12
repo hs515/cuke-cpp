@@ -106,7 +106,9 @@ void CucumberConsoleReporter::stepEnd(const CucumberStep& step)
     if (step.getStatus() == undefined)
     {
         myUndefSteps++;
-        std::cout << Indent(4) << YEL << step.getAction() << " " << step.getText() << RST << std::endl;
+        std::cout << Indent(4) << YEL << step.getAction() << " " << step.getText() << RST;
+        std::cout << GRY << " # Step definition undefined! Implement it using the snippet below?" << RST << std::endl;
+        std::cout << std::endl << YEL << step.getError() << RST << std::endl;
     }
     else if (step.getStatus() == passed)
     {
@@ -119,14 +121,16 @@ void CucumberConsoleReporter::stepEnd(const CucumberStep& step)
         myFailedSteps++;
         std::cout << Indent(4) << RED << step.getAction() << " " << step.getText() << RST;
         std::cout << GRY << " # " << step.getStepDefs().at(0).source << RST << std::endl;
+        std::cout << std::endl << RED << step.getError() << RST << std::endl;
     }
     else if (step.getStatus() == ambiguous)
     {
-        std::cout << Indent(4) << RED << step.getAction() << " " << step.getText() << std::endl;
-        std::cout << Indent(6) << "Ambiguous match of \"" << step.getText() << "\":" << std::endl;
+        std::cout << Indent(4) << RED << step.getAction() << " " << step.getText() << RST;
+        std::cout << GRY << " # Multiple ambiguous matches" << RST << std::endl;
+        std::cout << std::endl << RED << "Ambiguous matches of \"" << step.getText() << "\":" << std::endl;
         for (auto&& stepInfo : step.getStepDefs())
         {
-            std::cout << Indent(8) << stepInfo.source << ": /" << stepInfo.regexp << "/" << std::endl;
+            std::cout << Indent(2) << stepInfo.source << ": /" << stepInfo.regexp << "/" << std::endl;
         }
         std::cout << RST << std::endl;
     }

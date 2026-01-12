@@ -1,11 +1,11 @@
-#include "CukeBackend.hpp"
+#include "CukeRunner.hpp"
 
 #include "CucumberConsoleReporter.hpp"
 #include "CucumberHtmlReporter.hpp"
 
 using namespace cuke::internal;
 
-CukeBackend::CukeBackend(const ListenerOptions& options)
+CukeRunner::CukeRunner(const ListenerOptions& options)
 {
     if (options.consoleReport)
     {
@@ -19,58 +19,58 @@ CukeBackend::CukeBackend(const ListenerOptions& options)
     myEventListener.executionBegin();
 }
 
-CukeBackend::~CukeBackend()
+CukeRunner::~CukeRunner()
 {
     myEventListener.executionEnd();
 }
 
-void CukeBackend::beginFeature(const CucumberFeature& feature)
+void CukeRunner::beginFeature(const CucumberFeature& feature)
 {
     myEventListener.featureBegin(feature);
 }
 
-void CukeBackend::skipFeature(const CucumberFeature& feature)
+void CukeRunner::skipFeature(const CucumberFeature& feature)
 {
     myEventListener.featureSkip(feature);
 }
-void CukeBackend::endFeature(const CucumberFeature& feature)
+void CukeRunner::endFeature(const CucumberFeature& feature)
 {
     myEventListener.featureEnd(feature);
 }
 
-void CukeBackend::beginScenario(const CucumberScenario& scenario)
+void CukeRunner::beginScenario(const CucumberScenario& scenario)
 {
     myCukeServer.beginScenario(scenario.getTags());
     myEventListener.scenarioBegin(scenario);
 }
 
-void CukeBackend::skipScenario(const CucumberScenario& scenario)
+void CukeRunner::skipScenario(const CucumberScenario& scenario)
 {
     myEventListener.scenarioSkip(scenario);
 }
 
-void CukeBackend::endScenario(const CucumberScenario& scenario)
+void CukeRunner::endScenario(const CucumberScenario& scenario)
 {
     myCukeServer.endScenario(scenario.getTags());
     myEventListener.scenarioEnd(scenario);
 }
 
-void CukeBackend::beginStep(const CucumberStep& step)
+void CukeRunner::beginStep(const CucumberStep& step)
 {
     myEventListener.stepBegin(step);
 }
 
-void CukeBackend::skipStep(const CucumberStep& step)
+void CukeRunner::skipStep(const CucumberStep& step)
 {
     myEventListener.stepSkip(step);
 }
 
-void CukeBackend::endStep(const CucumberStep& step)
+void CukeRunner::endStep(const CucumberStep& step)
 {
     myEventListener.stepEnd(step);
 }
 
-bool CukeBackend::invokeStep(const CucumberStep& step, std::string& error)
+bool CukeRunner::invokeStep(const CucumberStep& step, std::string& error)
 {
     auto stepInfo = step.getStepDefs().at(0);
     std::vector<std::string> args;
@@ -82,7 +82,12 @@ bool CukeBackend::invokeStep(const CucumberStep& step, std::string& error)
     return success;
 }
 
-std::vector<CucumberStepInfo> CukeBackend::stepMatch(const std::string& stepText)
+std::string CukeRunner::snippetStep(const CucumberStep& step)
+{
+    return myCukeServer.snippetText(step.getAction(), step.getText(), step.getArgType());
+}
+
+std::vector<CucumberStepInfo> CukeRunner::stepMatch(const std::string& stepText)
 {
     return myCukeServer.stepMatch(stepText);
 }

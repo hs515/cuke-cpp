@@ -68,6 +68,22 @@ void CukeServer::beginScenario(const std::vector<std::string>& tags) const
     handle(request.dump());
 }
 
+void CukeServer::endScenario(const std::vector<std::string>& tags) const
+{
+    json jsonTags = json::array();
+    for (auto&& tag: tags) {
+        jsonTags.emplace_back(tag);
+    }
+
+    json request = json::array();
+    json payload;
+    payload["tags"] = jsonTags;
+    request.emplace_back("end_scenario");
+    request.emplace_back(payload);
+
+    handle(request.dump());
+}
+
 bool CukeServer::invoke(const std::string& stepId, const std::vector<std::string>& args, std::string& error) const
 {
     json jsonArgs = json::array();
@@ -87,22 +103,6 @@ bool CukeServer::invoke(const std::string& stepId, const std::vector<std::string
     bool success = response[0].get<std::string>() == "success";
     error = (success) ? "" : response[1]["message"].get<std::string>();
     return success;
-}
-
-void CukeServer::endScenario(const std::vector<std::string>& tags) const
-{
-    json jsonTags = json::array();
-    for (auto&& tag: tags) {
-        jsonTags.emplace_back(tag);
-    }
-
-    json request = json::array();
-    json payload;
-    payload["tags"] = jsonTags;
-    request.emplace_back("end_scenario");
-    request.emplace_back(payload);
-
-    handle(request.dump());
 }
 
 std::string CukeServer::snippetText(const std::string& stepAction, const std::string& stepText, const std::string& multilineArgClass) const

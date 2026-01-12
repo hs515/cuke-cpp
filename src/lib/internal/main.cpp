@@ -1,5 +1,5 @@
 #include <client/CukeDocument.hpp>
-#include <internal/CukeBackend.hpp>
+#include <internal/CukeRunner.hpp>
 #include <internal/ListenerOptions.hpp>
 
 #include <filesystem>
@@ -118,12 +118,12 @@ static std::vector<std::string> parse_filter_tags(int ac, char** av)
 static bool runBdd(const std::vector<std::string>& features, const std::vector<std::string>& tags, const ListenerOptions& opts)
 {
     using namespace ::cuke::internal;
-    CukeBackend cukeBackend(opts);
+    CukeRunner CukeRunner(opts);
     bool success = true;
     for (auto& feature : features)
     {
         CucumberFeature cucumberFeature(feature);
-        success = cucumberFeature.run(cukeBackend, tags) && success;
+        success = cucumberFeature.run(CukeRunner, tags) && success;
     }
     return success;
 }

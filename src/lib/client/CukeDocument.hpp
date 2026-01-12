@@ -10,7 +10,7 @@ namespace cuke
 {
     namespace internal
     {
-        class CucumberBackend;
+        class CucumberRunner;
 
         using CucumberTableArg = std::vector<std::vector<std::string>>;
         using CucumberStepInfo = cuke::internal::CucumberStepInfo;
@@ -37,8 +37,8 @@ namespace cuke
             void setEndTime();
             uint64_t getEndTime() const;
 
-            virtual bool run(CucumberBackend& backend, const std::vector<std::string>& filterTags) = 0;
-            virtual void skip(CucumberBackend& backend) = 0;
+            virtual bool run(CucumberRunner& runner, const std::vector<std::string>& filterTags) = 0;
+            virtual void skip(CucumberRunner& runner) = 0;
 
         private:
             uint64_t now() const;
@@ -59,20 +59,25 @@ namespace cuke
             std::string getText() const;
             void setError(const std::string& error);
             std::string getError() const;
+            void setArgType(const std::string& type);
+            std::string getArgType() const;
 
             void setTableArg(const CucumberTableArg& tableArg);
             const CucumberTableArg& getTableArg() const;
-            bool hasTableArg() const;
+            void setDocStringArg(const std::string& docString);
+            std::string getDocStringArg() const;
 
-            bool run(CucumberBackend& backend, const std::vector<std::string>& filterTags) override;
-            void skip(CucumberBackend& backend) override;
+            bool run(CucumberRunner& runner, const std::vector<std::string>& filterTags) override;
+            void skip(CucumberRunner& runner) override;
 
         private:
             std::vector<CucumberStepInfo> myStepDefs;
             std::string myAction;
             std::string myText;
             std::string myError;
+            std::string myArgType;
             CucumberTableArg myTableArg;
+            std::string myDocStringArg;
         };
 
         /// @brief Cucumber runnables that can have tags
@@ -99,8 +104,8 @@ namespace cuke
             const std::vector<CucumberStep>& getSteps() const;
             std::vector<CucumberStep>& getSteps();
 
-            bool run(CucumberBackend& backend, const std::vector<std::string>& filterTags) override;
-            void skip(CucumberBackend& backend) override;
+            bool run(CucumberRunner& runner, const std::vector<std::string>& filterTags) override;
+            void skip(CucumberRunner& runner) override;
 
         private:
             std::vector<CucumberStep> mySteps;
@@ -118,8 +123,8 @@ namespace cuke
             const std::vector<CucumberScenario>& getScenarios() const;
             std::vector<CucumberScenario>& getScenarios();
 
-            bool run(CucumberBackend& backend, const std::vector<std::string>& filterTags) override;
-            void skip(CucumberBackend& backend) override;
+            bool run(CucumberRunner& runner, const std::vector<std::string>& filterTags) override;
+            void skip(CucumberRunner& runner) override;
             const std::string& getFilename() const;
 
         private:

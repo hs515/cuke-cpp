@@ -9,6 +9,14 @@ struct CalcCtx {
     double result;
 };
 
+GIVEN("^I have entered numbers into the calculator$") {
+    TABLE_PARAM(numbers);
+}
+
+GIVEN("^I have entered numbers into the calculator$") {
+    TABLE_PARAM(numbers);
+}
+
 GIVEN("^I have entered (\\d+) into the calculator$") {
     REGEX_PARAM(double, n);
     ScenarioScope<CalcCtx> context;

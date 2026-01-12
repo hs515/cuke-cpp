@@ -13,7 +13,7 @@ set(CUKE_CPP_LIB_SOURCES
     client/CukeBuilder.hpp
     client/CukeDocument.cpp
     client/CukeDocument.hpp
-    internal/CucumberBackend.hpp
+    internal/CucumberRunner.hpp
     internal/CucumberConsoleReporter.cpp
     internal/CucumberConsoleReporter.hpp
     internal/CucumberEventListener.cpp
@@ -21,8 +21,8 @@ set(CUKE_CPP_LIB_SOURCES
     internal/CucumberHtmlReporter.cpp
     internal/CucumberHtmlReporter.hpp
     internal/CucumberStepInfo.hpp
-    internal/CukeBackend.cpp
-    internal/CukeBackend.hpp
+    internal/CukeRunner.cpp
+    internal/CukeRunner.hpp
     internal/ListenerOptions.hpp
     server/CukeServer.cpp
     server/CukeServer.hpp
