@@ -79,7 +79,7 @@ $(document).ready(function() {
 
     data.formattedTotalDuration = formatDuration(totalDuration);
 
-    document.title = "OPUS BDD Test Report - " + data.featureName;
+    document.title = "Cuke CPP Test Report - " + data.featureName;
 
     $('template').each(function() {
         let html = Mustache.render($(this).html(), data);

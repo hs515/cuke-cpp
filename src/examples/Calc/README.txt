@@ -1,2 +1,2 @@
-This was inspired by Cucumber-cpp Calc sample
+This example was inspired by Cucumber-cpp Calc sample
 
