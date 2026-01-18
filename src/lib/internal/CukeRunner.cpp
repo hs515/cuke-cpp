@@ -1,9 +1,14 @@
 #include "CukeRunner.hpp"
+#include "CukeUtilities.hpp"
+
+#include <nlohmann/json.hpp>
 
 using namespace cuke::internal;
+using namespace nlohmann;
 
-CukeRunner::CukeRunner(const ListenerOptions& options) :
-    myEventListener(options)
+CukeRunner::CukeRunner(const ReporterOptions& options, const FilterTagOptions& filterTags) :
+    myEventListener(options),
+    myFilterTags(filterTags)
 {
     myEventListener.executionBegin();
 }
@@ -13,61 +18,173 @@ CukeRunner::~CukeRunner()
     myEventListener.executionEnd();
 }
 
-void CukeRunner::beginFeature(const CucumberFeature& feature)
+bool CukeRunner::run(const std::string& featureFile)
 {
+    CukeDocument cukeDocument;
+    cukeDocument.parseFeatureFile(featureFile);
+    return runFeature(cukeDocument.feature);
+}
+
+void CukeRunner::beginFeature(CucumberFeature& feature)
+{
+    feature.start_time = now();
     myEventListener.featureBegin(feature);
 }
 
-void CukeRunner::skipFeature(const CucumberFeature& feature)
+bool CukeRunner::runFeature(CucumberFeature& feature)
 {
+    beginFeature(feature);
+
+    bool runningOk = true;
+    if (!myFilterTags.evaluate(feature.tags))
+    {
+        skipFeature(feature);
+    }
+    else
+    {
+        for (auto&& scenario : feature.scenarios)
+        {
+            runningOk = runScenario(scenario) && runningOk;
+        }
+        feature.status = (runningOk ? passed : failed);
+    }
+
+    endFeature(feature);
+    return runningOk;
+}
+
+void CukeRunner::skipFeature(CucumberFeature& feature)
+{
+    feature.status = skipped;
+    for (auto&& scenario : feature.scenarios)
+    {
+        beginScenario(scenario);
+        skipScenario(scenario);
+        endScenario(scenario);
+    }
     myEventListener.featureSkip(feature);
 }
-void CukeRunner::endFeature(const CucumberFeature& feature)
+
+void CukeRunner::endFeature(CucumberFeature& feature)
 {
+    feature.end_time = now();
     myEventListener.featureEnd(feature);
 }
 
-void CukeRunner::beginScenario(const CucumberScenario& scenario)
+void CukeRunner::beginScenario(CucumberScenario& scenario)
 {
-    myCukeServer.beginScenario(scenario.getTags());
+    scenario.start_time = now();
+    myCukeServer.beginScenario(scenario.tags);
     myEventListener.scenarioBegin(scenario);
 }
 
-void CukeRunner::skipScenario(const CucumberScenario& scenario)
+bool CukeRunner::runScenario(CucumberScenario& scenario)
 {
+    beginScenario(scenario);
+
+    bool runningOk = true;
+    if (!myFilterTags.evaluate(scenario.tags))
+    {
+        skipScenario(scenario);
+    }
+    else
+    {
+        for (auto&& step : scenario.steps)
+        {
+            if (runningOk) 
+            {
+                runningOk = runStep(step);
+            }
+            else
+            {
+                skipStep(step);
+            }
+        }
+        scenario.status = (runningOk ? passed : failed);
+    }
+
+    endScenario(scenario);
+    return runningOk;
+}
+
+void CukeRunner::skipScenario(CucumberScenario& scenario)
+{
+    scenario.status = skipped;
+    for (auto&& step : scenario.steps)
+    {
+        beginStep(step);
+        skipStep(step);
+        endStep(step);
+    }
     myEventListener.scenarioSkip(scenario);
 }
 
-void CukeRunner::endScenario(const CucumberScenario& scenario)
+void CukeRunner::endScenario(CucumberScenario& scenario)
 {
-    myCukeServer.endScenario(scenario.getTags());
+    scenario.end_time = now();
+    myCukeServer.endScenario(scenario.tags);
     myEventListener.scenarioEnd(scenario);
 }
 
-void CukeRunner::beginStep(const CucumberStep& step)
+void CukeRunner::beginStep(CucumberStep& step)
 {
+    step.start_time = now();
     myEventListener.stepBegin(step);
 }
 
-void CukeRunner::skipStep(const CucumberStep& step)
+bool CukeRunner::runStep(CucumberStep& step)
 {
+    beginStep(step);
+
+    step.step_defs = stepMatch(step.text); // Update step definitions
+    if (step.step_defs.size() == 0) // Handling undefined step definition
+    {
+        step.status = undefined;
+        step.error = snippetStep(step);
+    }
+    else if (step.step_defs.size() > 1) // Handling ambiguous step definitions
+    {
+        step.status = ambiguous;
+    }
+    else // Good
+    {
+        std::string error;
+        if (invokeStep(step, error))
+        {
+            step.status = passed;
+        }
+        else
+        {
+            step.status = failed;
+            step.error = error;
+        }
+    }
+
+    endStep(step);
+    return step.status == passed;
+}
+
+void CukeRunner::skipStep(CucumberStep& step)
+{
+    step.status = skipped;
     myEventListener.stepSkip(step);
 }
 
-void CukeRunner::endStep(const CucumberStep& step)
+void CukeRunner::endStep(CucumberStep& step)
 {
+    step.end_time = now();
     myEventListener.stepEnd(step);
 }
 
-bool CukeRunner::invokeStep(const CucumberStep& step, std::string& error)
+bool CukeRunner::invokeStep(CucumberStep& step, std::string& error)
 {
-    auto stepInfo = step.getStepDefs().at(0);
+    auto stepInfo = step.step_defs.at(0);
     bool success = true;
-    if (step.getArgType() == "DocString")
+    if ("DocString" == step.arg_type)
     {
-        success = myCukeServer.invoke(stepInfo.id, step.getDocStringArg(), error);
+        success = myCukeServer.invoke(stepInfo.id, step.doc_string_arg, error);
     }
-    else // if (step.getArgType() == "DataTable")
+    else // if ("DataTable" == step.arg_type)
     {
         std::vector<std::string> args;
         for (auto&& argPair : stepInfo.args)
@@ -79,12 +196,29 @@ bool CukeRunner::invokeStep(const CucumberStep& step, std::string& error)
     return success;
 }
 
-std::string CukeRunner::snippetStep(const CucumberStep& step)
+std::string CukeRunner::snippetStep(CucumberStep& step)
 {
-    return myCukeServer.snippetText(step.getAction(), step.getText(), step.getArgType());
+    return myCukeServer.snippetText(step.action, step.text, step.arg_type);
 }
 
-std::vector<CucumberStepInfo> CukeRunner::stepMatch(const std::string& stepText)
+std::vector<CukeStepInfo> CukeRunner::stepMatch(const std::string& stepText)
 {
-    return myCukeServer.stepMatch(stepText);
+    json response = json::parse(myCukeServer.stepMatch(stepText));
+
+    std::vector<CukeStepInfo> steps;
+    for (auto&& stepJson : response)
+    {
+        auto stepInfo = CukeStepInfo();
+        stepInfo.id = stepJson["id"].get<std::string>();
+        stepInfo.regexp = stepJson["regexp"].get<std::string>();
+        stepInfo.source = stepJson["source"].get<std::string>();
+        for(auto arg : stepJson["args"])
+        {
+            StepMatchArg pair(arg["pos"].get<unsigned int>(), arg["val"].get<std::string>());
+            stepInfo.args.emplace_back(pair);
+        }
+        steps.emplace_back(stepInfo);
+    }
+
+    return steps;
 }

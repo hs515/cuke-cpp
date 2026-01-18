@@ -1,8 +1,10 @@
-#include "ListenerOptions.hpp"
+#include "ReporterOptions.hpp"
+
+#include <string_view>
 
 using namespace cuke::internal;
 
-void ListenerOptions::parse(int ac, char**av)
+void ReporterOptions::parse(int ac, char**av)
 {
     for (int i = 1; i < ac; ++i) {
         std::string_view arg(av[i]);

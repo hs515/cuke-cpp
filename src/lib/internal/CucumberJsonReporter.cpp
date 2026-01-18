@@ -1,6 +1,7 @@
 #include "CucumberJsonReporter.hpp"
 
 #include "client/CukeDocument.hpp"
+#include "CukeUtilities.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -25,13 +26,13 @@ static std::string statusToString(CucumberExecutionStatus status)
 
 void CucumberJsonReporter::executionBegin()
 {
-    myJson["startTime"] = CucumberRunnable::now();
+    myJson["startTime"] = now();
     myJson["features"] = json::array();
 }
 
 void CucumberJsonReporter::executionEnd()
 {
-    myJson["endTime"] = CucumberRunnable::now();
+    myJson["endTime"] = now();
     myJson["duration"] = myJson["endTime"].get<uint64_t>() - myJson["startTime"].get<uint64_t>();
     myJson["passedFeatures"] = myPassedFeatures;
     myJson["failedFeatures"] = myFailedFeatures;
@@ -45,13 +46,13 @@ void CucumberJsonReporter::featureBegin(const CucumberFeature& feature)
     json featureNode;
     json tagsNode = json::array();
 
-    for (auto&& tag : feature.getTags())
+    for (auto&& tag : feature.tags)
     {
         tagsNode.emplace_back(tag);
     }
 
-    featureNode["featureName"] = feature.getName();
-    featureNode["featureFileName"] = feature.getFilename();
+    featureNode["featureName"] = feature.name;
+    featureNode["featureFileName"] = feature.filename;
     featureNode["featureTags"] = tagsNode;
     featureNode["featureScenarios"] = json::array();
 
@@ -64,23 +65,23 @@ void CucumberJsonReporter::featureBegin(const CucumberFeature& feature)
 
 void CucumberJsonReporter::featureEnd(const CucumberFeature& feature)
 {
-    (*myFeatureNodePtr)["status"] = statusToString(feature.getStatus());
-    (*myFeatureNodePtr)["startTime"] = feature.getStartTime();
-    (*myFeatureNodePtr)["endTime"] = feature.getEndTime();
-    (*myFeatureNodePtr)["duration"] = feature.getEndTime() - feature.getStartTime();
+    (*myFeatureNodePtr)["status"] = statusToString(feature.status);
+    (*myFeatureNodePtr)["startTime"] = feature.start_time;
+    (*myFeatureNodePtr)["endTime"] = feature.end_time;
+    (*myFeatureNodePtr)["duration"] = feature.end_time - feature.start_time;
     (*myFeatureNodePtr)["passedScenarios"] = myFeaturePassedScenarios;
     (*myFeatureNodePtr)["failedScenarios"] = myFeatureFailedScenarios;
     (*myFeatureNodePtr)["skippedScenarios"] = myFeatureSkippedScenarios;
 
-    if (feature.getStatus() == passed) myPassedFeatures++; 
-    else if (feature.getStatus() == failed) myFailedFeatures++; 
+    if (passed == feature.status) myPassedFeatures++; 
+    else if (failed == feature.status) myFailedFeatures++; 
 }
 
 void CucumberJsonReporter::featureSkip(const CucumberFeature& feature)
 {
     featureBegin(feature);
     mySkippedFeatures++;
-    myFeatureSkippedScenarios = feature.getScenarios().size();
+    myFeatureSkippedScenarios = feature.scenarios.size();
     featureEnd(feature);
 }
 
@@ -89,12 +90,12 @@ void CucumberJsonReporter::scenarioBegin(const CucumberScenario& scenario)
     json scenarioNode;
     json tagsNode = json::array();
 
-    for (auto&& tag : scenario.getTags())
+    for (auto&& tag : scenario.tags)
     {
         tagsNode.emplace_back(tag);
     }
 
-    scenarioNode["scenarioName"] = scenario.getName();
+    scenarioNode["scenarioName"] = scenario.name;
     scenarioNode["scenarioTags"] = tagsNode;
     scenarioNode["scenarioSteps"] = json::array();
 
@@ -104,13 +105,13 @@ void CucumberJsonReporter::scenarioBegin(const CucumberScenario& scenario)
 
 void CucumberJsonReporter::scenarioEnd(const CucumberScenario& scenario)
 {
-    (*myScenarioNodePtr)["startTime"] = scenario.getStartTime();
-    (*myScenarioNodePtr)["endTime"] = scenario.getEndTime();
-    (*myScenarioNodePtr)["duration"] = scenario.getEndTime() - scenario.getStartTime();
-    (*myScenarioNodePtr)["status"] = statusToString(scenario.getStatus());
+    (*myScenarioNodePtr)["startTime"] = scenario.start_time;
+    (*myScenarioNodePtr)["endTime"] = scenario.end_time;
+    (*myScenarioNodePtr)["duration"] = scenario.end_time - scenario.start_time;
+    (*myScenarioNodePtr)["status"] = statusToString(scenario.status);
 
-    if (scenario.getStatus() == passed) myFeaturePassedScenarios++; 
-    else if (scenario.getStatus() == failed) myFeatureFailedScenarios++; 
+    if (passed == scenario.status) myFeaturePassedScenarios++; 
+    else if (failed == scenario.status) myFeatureFailedScenarios++; 
 }
 
 void CucumberJsonReporter::scenarioSkip(const CucumberScenario& scenario)
@@ -123,19 +124,19 @@ void CucumberJsonReporter::scenarioSkip(const CucumberScenario& scenario)
 void CucumberJsonReporter::stepBegin(const CucumberStep& step)
 {
     json stepNode;
-    stepNode["keyword"] = step.getAction();
-    stepNode["text"] = step.getText();
+    stepNode["keyword"] = step.action;
+    stepNode["text"] = step.text;
     json& treeNode = (*myScenarioNodePtr)["scenarioSteps"].emplace_back(stepNode);
     myStepNodePtr = &treeNode;
 }
 
 void CucumberJsonReporter::stepEnd(const CucumberStep& step)
 {
-    (*myStepNodePtr)["status"] = statusToString(step.getStatus());
-    (*myStepNodePtr)["error"] = step.getError();
-    (*myStepNodePtr)["startTime"] = step.getStartTime();
-    (*myStepNodePtr)["endTime"] = step.getEndTime();
-    (*myStepNodePtr)["duration"] = step.getEndTime() - step.getStartTime();
+    (*myStepNodePtr)["status"] = statusToString(step.status);
+    (*myStepNodePtr)["error"] = step.error;
+    (*myStepNodePtr)["startTime"] = step.start_time;
+    (*myStepNodePtr)["endTime"] = step.end_time;
+    (*myStepNodePtr)["duration"] = step.end_time - step.start_time;
 }
 
 void CucumberJsonReporter::stepSkip(const CucumberStep& step)

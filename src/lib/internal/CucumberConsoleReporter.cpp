@@ -1,6 +1,7 @@
 #include "CucumberConsoleReporter.hpp"
 
 #include "client/CukeDocument.hpp"
+#include "CukeUtilities.hpp"
 
 #include <chrono>
 #include <iomanip> 
@@ -18,43 +19,48 @@ using namespace cuke::internal;
 
 void CucumberConsoleReporter::executionBegin()
 {
-    myStartTime = CucumberRunnable::now();
+    myStartTime = now();
 }
 
 void CucumberConsoleReporter::executionEnd()
 {
-    uint64_t endTime = CucumberRunnable::now();
+    uint64_t endTime = now();
 
-    int totalScenarios = myPassedScenarios + myFailedScenarios;
+    int totalScenarios = myPassedScenarios + mySkippedScenarios + myFailedScenarios;
     std::cout << totalScenarios << " scenarios";
+
+    int scenarioCounts[3] = { myFailedScenarios, mySkippedScenarios, myPassedScenarios };
+    std::string scenarioDescriptions[3] = {"failed", "skipped", "passed"};
+    std::string scenarioColors[3] = {RED, CYN, GRN};
+
     std::cout << " (";
-    if (myFailedScenarios > 0) 
+    for (int i = 0, acc = 0; i < 3; i++)
     {
-        std::cout << RED << myFailedScenarios << " failed" << RST;
-    }
-    if (myPassedScenarios > 0) 
-    {
-        if (myFailedScenarios > 0) std::cout << ", ";
-        std::cout << GRN << myPassedScenarios << " passed" << RST;
+        if (scenarioCounts[i] > 0)
+        {
+            if (acc > 0) std::cout << ", ";
+            std::cout << scenarioColors[i] << scenarioCounts[i] << " " << scenarioDescriptions[i] << RST;
+        } 
+        acc += scenarioCounts[i];
     }
     std::cout << ")" << std::endl; 
 
     int totalSteps = myPassedSteps + myFailedSteps + myUndefSteps + mySkippedSteps;
     std::cout << totalSteps << " steps";
 
-    int counts[4] = { myFailedSteps, mySkippedSteps, myUndefSteps, myPassedSteps };
-    std::string descriptions[4] = {"failed", "skipped", "undefined", "passed"};
-    std::string colors[4] = {RED, CYN, YEL, GRN};
+    int stepCounts[4] = { myFailedSteps, mySkippedSteps, myUndefSteps, myPassedSteps };
+    std::string stepDescriptions[4] = {"failed", "skipped", "undefined", "passed"};
+    std::string stepColors[4] = {RED, CYN, YEL, GRN};
 
     std::cout << " (";
     for (int i = 0, acc = 0; i < 4; i++)
     {
-        if (counts[i] > 0)
+        if (stepCounts[i] > 0)
         {
             if (acc > 0) std::cout << ", ";
-            std::cout << colors[i] << counts[i] << " " << descriptions[i] << RST;
+            std::cout << stepColors[i] << stepCounts[i] << " " << stepDescriptions[i] << RST;
         } 
-        acc += counts[i];
+        acc += stepCounts[i];
     }
     std::cout << ")" << std::endl; 
 
@@ -66,7 +72,7 @@ void CucumberConsoleReporter::executionEnd()
 
 void CucumberConsoleReporter::featureBegin(const CucumberFeature& feature)
 {    
-    std::cout << BOLD << "Feature: " << feature.getName() << RST << std::endl;
+    std::cout << BOLD << "Feature: " << feature.name << RST << std::endl;
 }
 
 void CucumberConsoleReporter::featureEnd(const CucumberFeature& feature)
@@ -82,13 +88,14 @@ void CucumberConsoleReporter::featureSkip(const CucumberFeature& feature)
 void CucumberConsoleReporter::scenarioBegin(const CucumberScenario& scenario)
 {
     myScenarioSkipped = false;
-    std::cout << Indent(2) << BOLD << "Scenario: " << scenario.getName() << RST << std::endl;
+    std::cout << Indent(2) << BOLD << "Scenario: " << scenario.name << RST << std::endl;
 }
 
 void CucumberConsoleReporter::scenarioEnd(const CucumberScenario& scenario)
 {
-    if (scenario.getStatus() == passed) myPassedScenarios++;
-    else if (scenario.getStatus() == failed) myFailedScenarios++;
+    if (passed == scenario.status) myPassedScenarios++;
+    else if (failed == scenario.status) myFailedScenarios++;
+    else if (skipped == scenario.status) mySkippedScenarios++;
 }
 
 void CucumberConsoleReporter::scenarioSkip(const CucumberScenario& scenario)
@@ -103,32 +110,32 @@ void CucumberConsoleReporter::stepBegin(const CucumberStep& step)
 
 void CucumberConsoleReporter::stepEnd(const CucumberStep& step)
 {
-    if (step.getStatus() == undefined)
+    if (undefined == step.status)
     {
         myUndefSteps++;
-        std::cout << Indent(4) << YEL << step.getAction() << " " << step.getText() << RST;
+        std::cout << Indent(4) << YEL << step.action << " " << step.text << RST;
         std::cout << GRY << " # Step definition undefined! Implement it using the snippet below?" << RST << std::endl;
-        std::cout << std::endl << YEL << step.getError() << RST << std::endl;
+        std::cout << std::endl << YEL << step.error << RST << std::endl;
     }
-    else if (step.getStatus() == passed)
+    else if (passed == step.status)
     {
         myPassedSteps++;
-        std::cout << Indent(4) << GRN << step.getAction() << " " << step.getText() << RST;
-        std::cout << GRY << " # " << step.getStepDefs().at(0).source << RST << std::endl;
+        std::cout << Indent(4) << GRN << step.action << " " << step.text << RST;
+        std::cout << GRY << " # " << step.step_defs.at(0).source << RST << std::endl;
     }
-    else if (step.getStatus() == failed)
+    else if (failed == step.status)
     {
         myFailedSteps++;
-        std::cout << Indent(4) << RED << step.getAction() << " " << step.getText() << RST;
-        std::cout << GRY << " # " << step.getStepDefs().at(0).source << RST << std::endl;
-        std::cout << std::endl << RED << step.getError() << RST << std::endl;
+        std::cout << Indent(4) << RED << step.action << " " << step.text << RST;
+        std::cout << GRY << " # " << step.step_defs.at(0).source << RST << std::endl;
+        std::cout << std::endl << RED << step.error << RST << std::endl;
     }
-    else if (step.getStatus() == ambiguous)
+    else if (ambiguous == step.status)
     {
-        std::cout << Indent(4) << RED << step.getAction() << " " << step.getText() << RST;
+        std::cout << Indent(4) << RED << step.action << " " << step.text << RST;
         std::cout << GRY << " # Multiple ambiguous matches" << RST << std::endl;
-        std::cout << std::endl << RED << "Ambiguous matches of \"" << step.getText() << "\":" << std::endl;
-        for (auto&& stepInfo : step.getStepDefs())
+        std::cout << std::endl << RED << "Ambiguous matches of \"" << step.text << "\":" << std::endl;
+        for (auto&& stepInfo : step.step_defs)
         {
             std::cout << Indent(2) << stepInfo.source << ": /" << stepInfo.regexp << "/" << std::endl;
         }
@@ -141,7 +148,7 @@ void CucumberConsoleReporter::stepSkip(const CucumberStep& step)
     if (!myScenarioSkipped)
     {
         mySkippedSteps++;
-        std::cout << Indent(4) << CYN << step.getAction() << " " << step.getText() << RST << std::endl;
+        std::cout << Indent(4) << CYN << step.action << " " << step.text << RST << std::endl;
     }
 }
 

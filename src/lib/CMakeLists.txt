@@ -9,11 +9,8 @@ file(GLOB_RECURSE CUKE_CPP_LIB_SOURCES "${CUKE_CPP_LIB_SRC_DIR}/*.[ch]pp")
 list(APPEND CUKE_CPP_LIB_ALL_SOURCES ${CUKE_CPP_LIB_SOURCES})
 
 set(CUKE_CPP_LIB_SOURCES
-    client/CukeBuilder.cpp
-    client/CukeBuilder.hpp
     client/CukeDocument.cpp
     client/CukeDocument.hpp
-    internal/CucumberRunner.hpp
     internal/CucumberConsoleReporter.cpp
     internal/CucumberConsoleReporter.hpp
     internal/CucumberEventListener.cpp
@@ -22,11 +19,14 @@ set(CUKE_CPP_LIB_SOURCES
     internal/CucumberHtmlReporter.hpp
     internal/CucumberJsonReporter.cpp
     internal/CucumberJsonReporter.hpp
-    internal/CucumberStepInfo.hpp
     internal/CukeRunner.cpp
     internal/CukeRunner.hpp
-    internal/ListenerOptions.cpp
-    internal/ListenerOptions.hpp
+    internal/CukeUtilities.cpp
+    internal/CukeUtilities.hpp
+    internal/FilterTagOptions.cpp
+    internal/FilterTagOptions.hpp
+    internal/ReporterOptions.cpp
+    internal/ReporterOptions.hpp
     server/CukeServer.cpp
     server/CukeServer.hpp
 )
@@ -52,6 +52,7 @@ target_link_libraries(
     PUBLIC
         cucumber::gherkin
         cucumber-cpp-internal
+        cucumber::tag-expressions
 )
 
 set_target_properties(

@@ -1,6 +1,7 @@
 #include <client/CukeDocument.hpp>
 #include <internal/CukeRunner.hpp>
-#include <internal/ListenerOptions.hpp>
+#include <internal/FilterTagOptions.hpp>
+#include <internal/ReporterOptions.hpp>
 
 #include <filesystem>
 #include <iostream>
@@ -74,39 +75,14 @@ static std::vector<std::string> parse_feature_files(int ac, char** av)
     return featureFiles;
 }
 
-static std::vector<std::string> parse_filter_tags(int ac, char** av)
-{
-    std::vector<std::string> tags;
-    bool foundTagsOption = false;
-    for (int i = 1; i < ac; ++i) {
-        std::string_view arg(av[i]);
-        if (arg == "--tags")
-        {
-            foundTagsOption = true;
-            continue;
-        }
-        else if (arg[0] == '-')
-        {
-            foundTagsOption = false;
-            continue;
-        }
-        else if (foundTagsOption)
-        {
-            tags.emplace_back(arg);
-        }
-    }
-    return tags;
-}
-
-static bool runBdd(const std::vector<std::string>& features, const std::vector<std::string>& tags, const ListenerOptions& opts)
+static bool runBdd(const std::vector<std::string>& features, const ReporterOptions& reporterOpts, const FilterTagOptions& tagOpts)
 {
     using namespace ::cuke::internal;
-    CukeRunner CukeRunner(opts);
+    CukeRunner cukeRunner(reporterOpts, tagOpts);
     bool success = true;
     for (auto& feature : features)
     {
-        CucumberFeature cucumberFeature(feature);
-        success = cucumberFeature.run(CukeRunner, tags) && success;
+        success = cukeRunner.run(feature) && success;
     }
     return success;
 }
@@ -126,20 +102,29 @@ int main(int argc, char** argv)
     }
 
     // Collect filter tags
-    std::vector<std::string> tags = parse_filter_tags(argc, argv);
+    FilterTagOptions filterTagOptions;
+    try
+    {
+        filterTagOptions.parse(argc, argv);
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Error parsing tag expressions: " << e.what() << std::endl;
+        exit(1);
+    }
 
     // Collect listener options
-    ListenerOptions listenerOptions;
-    listenerOptions.parse(argc, argv);
+    ReporterOptions reporterOptions;
+    reporterOptions.parse(argc, argv);
 
     try 
     {
-        bool success = runBdd(featureFiles, tags, listenerOptions);
+        bool success = runBdd(featureFiles, reporterOptions, filterTagOptions);
         return success ? 0 : 1;
     }
     catch(std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error running BDD tests: " << e.what() << std::endl;
         exit(1);
     }
 

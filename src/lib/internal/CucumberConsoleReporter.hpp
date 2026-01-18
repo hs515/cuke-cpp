@@ -47,6 +47,7 @@ namespace cuke
 
             int myPassedScenarios = 0;
             int myFailedScenarios = 0;
+            int mySkippedScenarios = 0;
             int myPassedSteps = 0;
             int myFailedSteps = 0;
             int myUndefSteps = 0;

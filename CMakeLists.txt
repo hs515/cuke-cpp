@@ -153,10 +153,20 @@ if(CUKE_CPP_FETCH_DEPS)
     )
     FetchContent_MakeAvailable(cucumber_cpp)
 
+    FetchContent_Declare(
+        cucumber_tag_expressions
+        GIT_REPOSITORY https://github.com/hs515/tag-expressions.git
+        GIT_TAG cpp-tag-expressions
+        OVERRIDE_FIND_PACKAGE
+        SOURCE_SUBDIR "cpp"
+    )
+    FetchContent_MakeAvailable(cucumber_tag_expressions)
 endif()
 
 find_package(cucumber_gherkin CONFIG REQUIRED)
 find_package(cucumber_cpp CONFIG REQUIRED)
+find_package(cucumber_tag_expressions CONFIG REQUIRED)
+
 message(STATUS "cucumber_cpp source directory is: ${cucumber_cpp_SOURCE_DIR}")
 message(STATUS "cucumber_cpp binary directory is: ${cucumber_cpp_BINARY_DIR}")
 
@@ -166,7 +176,7 @@ message(STATUS "cucumber_cpp binary directory is: ${cucumber_cpp_BINARY_DIR}")
 #
 ###
 add_subdirectory(src/lib)
-add_subdirectory(src/examples)
+add_subdirectory(examples)
 
 # ###
 # #

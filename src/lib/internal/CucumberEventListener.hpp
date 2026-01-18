@@ -11,7 +11,7 @@ namespace cuke
         class CucumberFeature;
         class CucumberScenario;
         class CucumberStep;
-        class ListenerOptions;
+        class ReporterOptions;
 
         class CucumberEventListenerIF
         {
@@ -32,7 +32,7 @@ namespace cuke
         class CucumberEventListener : public CucumberEventListenerIF
         {
         public:
-            explicit CucumberEventListener(const ListenerOptions& options);
+            explicit CucumberEventListener(const ReporterOptions& options);
 
             void executionBegin() override;
             void executionEnd() override;

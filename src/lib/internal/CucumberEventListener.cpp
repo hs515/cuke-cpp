@@ -3,11 +3,11 @@
 #include "CucumberConsoleReporter.hpp"
 #include "CucumberHtmlReporter.hpp"
 #include "CucumberJsonReporter.hpp"
-#include "ListenerOptions.hpp"
+#include "ReporterOptions.hpp"
 
 using namespace cuke::internal;
 
-CucumberEventListener::CucumberEventListener(const ListenerOptions& options)
+CucumberEventListener::CucumberEventListener(const ReporterOptions& options)
 {
     if (options.consoleReport)
     {

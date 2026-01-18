@@ -1,39 +1,45 @@
-#pragma once
+#ifndef CUKE_INTERNAL_CUKERUNNER_HPP
+#define CUKE_INTERNAL_CUKERUNNER_HPP
 
 #include "CucumberEventListener.hpp"
-#include "CucumberRunner.hpp"
-#include "CucumberStepInfo.hpp"
-#include "ListenerOptions.hpp"
+#include "FilterTagOptions.hpp"
+#include "ReporterOptions.hpp"
 #include "client/CukeDocument.hpp"
 #include "server/CukeServer.hpp"
 
-namespace cuke
+#include <string>
+
+namespace cuke::internal
 {
-    namespace internal
+    class CukeRunner
     {
-        class CukeRunner : public CucumberRunner
-        {
-        public:
-            CukeRunner(const ListenerOptions& options);
-            ~CukeRunner() override;
-            void beginFeature(const CucumberFeature& feature) override;
-            void skipFeature(const CucumberFeature& feature) override;
-            void endFeature(const CucumberFeature& feature) override;
-            void beginScenario(const CucumberScenario& scenario) override;
-            void skipScenario(const CucumberScenario& scenario) override;
-            void endScenario(const CucumberScenario& scenario) override;
-            void beginStep(const CucumberStep& step) override;
-            void skipStep(const CucumberStep& step) override;
-            void endStep(const CucumberStep& step) override;
-            bool invokeStep(const CucumberStep& step, std::string& error) override;
-            std::string snippetStep(const CucumberStep& step) override;
-            std::vector<CucumberStepInfo> stepMatch(const std::string& stepText) override;
+    public:
+        CukeRunner(const ReporterOptions& options, const FilterTagOptions& filterTags);
+        ~CukeRunner();
 
-        private:
-            CukeServer myCukeServer;
-            CucumberEventListener myEventListener;
-        };
+        bool run(const std::string& featureFile);
 
-    } // namespace internal
+    private:
+        void beginFeature(CucumberFeature& feature);
+        bool runFeature(CucumberFeature& feature);
+        void skipFeature(CucumberFeature& feature);
+        void endFeature(CucumberFeature& feature);
+        void beginScenario(CucumberScenario& scenario);
+        bool runScenario(CucumberScenario& scenario);
+        void skipScenario(CucumberScenario& scenario);
+        void endScenario(CucumberScenario& scenario);
+        void beginStep(CucumberStep& step);
+        bool runStep(CucumberStep& step);
+        void skipStep(CucumberStep& step);
+        void endStep(CucumberStep& step);
+        bool invokeStep(CucumberStep& step, std::string& error);
+        std::string snippetStep(CucumberStep& step);
+        std::vector<CukeStepInfo> stepMatch(const std::string& stepText);
 
-} // namespace cuke
+        CukeServer myCukeServer;
+        CucumberEventListener myEventListener;
+        const FilterTagOptions& myFilterTags;
+    };
+} // namespace cuke::internal
+
+#endif // CUKE_INTERNAL_CUKERUNNER_HPP
