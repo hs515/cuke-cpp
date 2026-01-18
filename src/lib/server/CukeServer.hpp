@@ -46,6 +46,9 @@ namespace cuke::internal
         std::string snippetText(const std::string& stepAction, const std::string& stepText, const std::string& multilineArgClass) const;
 
     private:
+        /// @brief Handle a request string and return the response string
+        /// @param request request string
+        /// @return response string
         std::string handle(const std::string& request) const;
     };
 } // namespace cuke::internal

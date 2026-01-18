@@ -25,13 +25,13 @@ bool CukeRunner::run(const std::string& featureFile)
     return runFeature(cukeDocument.feature);
 }
 
-void CukeRunner::beginFeature(CucumberFeature& feature)
+void CukeRunner::beginFeature(CukeFeature& feature)
 {
     feature.start_time = now();
     myEventListener.featureBegin(feature);
 }
 
-bool CukeRunner::runFeature(CucumberFeature& feature)
+bool CukeRunner::runFeature(CukeFeature& feature)
 {
     beginFeature(feature);
 
@@ -53,7 +53,7 @@ bool CukeRunner::runFeature(CucumberFeature& feature)
     return runningOk;
 }
 
-void CukeRunner::skipFeature(CucumberFeature& feature)
+void CukeRunner::skipFeature(CukeFeature& feature)
 {
     feature.status = skipped;
     for (auto&& scenario : feature.scenarios)
@@ -65,20 +65,20 @@ void CukeRunner::skipFeature(CucumberFeature& feature)
     myEventListener.featureSkip(feature);
 }
 
-void CukeRunner::endFeature(CucumberFeature& feature)
+void CukeRunner::endFeature(CukeFeature& feature)
 {
     feature.end_time = now();
     myEventListener.featureEnd(feature);
 }
 
-void CukeRunner::beginScenario(CucumberScenario& scenario)
+void CukeRunner::beginScenario(CukeScenario& scenario)
 {
     scenario.start_time = now();
     myCukeServer.beginScenario(scenario.tags);
     myEventListener.scenarioBegin(scenario);
 }
 
-bool CukeRunner::runScenario(CucumberScenario& scenario)
+bool CukeRunner::runScenario(CukeScenario& scenario)
 {
     beginScenario(scenario);
 
@@ -97,7 +97,9 @@ bool CukeRunner::runScenario(CucumberScenario& scenario)
             }
             else
             {
+                beginStep(step);
                 skipStep(step);
+                endStep(step);
             }
         }
         scenario.status = (runningOk ? passed : failed);
@@ -107,7 +109,7 @@ bool CukeRunner::runScenario(CucumberScenario& scenario)
     return runningOk;
 }
 
-void CukeRunner::skipScenario(CucumberScenario& scenario)
+void CukeRunner::skipScenario(CukeScenario& scenario)
 {
     scenario.status = skipped;
     for (auto&& step : scenario.steps)
@@ -119,20 +121,20 @@ void CukeRunner::skipScenario(CucumberScenario& scenario)
     myEventListener.scenarioSkip(scenario);
 }
 
-void CukeRunner::endScenario(CucumberScenario& scenario)
+void CukeRunner::endScenario(CukeScenario& scenario)
 {
     scenario.end_time = now();
     myCukeServer.endScenario(scenario.tags);
     myEventListener.scenarioEnd(scenario);
 }
 
-void CukeRunner::beginStep(CucumberStep& step)
+void CukeRunner::beginStep(CukeStep& step)
 {
     step.start_time = now();
     myEventListener.stepBegin(step);
 }
 
-bool CukeRunner::runStep(CucumberStep& step)
+bool CukeRunner::runStep(CukeStep& step)
 {
     beginStep(step);
 
@@ -164,19 +166,19 @@ bool CukeRunner::runStep(CucumberStep& step)
     return step.status == passed;
 }
 
-void CukeRunner::skipStep(CucumberStep& step)
+void CukeRunner::skipStep(CukeStep& step)
 {
     step.status = skipped;
     myEventListener.stepSkip(step);
 }
 
-void CukeRunner::endStep(CucumberStep& step)
+void CukeRunner::endStep(CukeStep& step)
 {
     step.end_time = now();
     myEventListener.stepEnd(step);
 }
 
-bool CukeRunner::invokeStep(CucumberStep& step, std::string& error)
+bool CukeRunner::invokeStep(CukeStep& step, std::string& error)
 {
     auto stepInfo = step.step_defs.at(0);
     bool success = true;
@@ -196,7 +198,7 @@ bool CukeRunner::invokeStep(CucumberStep& step, std::string& error)
     return success;
 }
 
-std::string CukeRunner::snippetStep(CucumberStep& step)
+std::string CukeRunner::snippetStep(CukeStep& step)
 {
     return myCukeServer.snippetText(step.action, step.text, step.arg_type);
 }

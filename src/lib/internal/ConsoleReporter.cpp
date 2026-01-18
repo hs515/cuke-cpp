@@ -1,10 +1,11 @@
-#include "CucumberConsoleReporter.hpp"
+#include "ConsoleReporter.hpp"
 
 #include "client/CukeDocument.hpp"
 #include "CukeUtilities.hpp"
 
 #include <chrono>
-#include <iomanip> 
+#include <iomanip>
+#include <iostream>
 #include <vector>
 
 using namespace cuke::internal;
@@ -17,12 +18,12 @@ using namespace cuke::internal;
 #define GRY  "\033[90m"
 #define BOLD "\033[1m"
 
-void CucumberConsoleReporter::executionBegin()
+void ConsoleReporter::executionBegin()
 {
     myStartTime = now();
 }
 
-void CucumberConsoleReporter::executionEnd()
+void ConsoleReporter::executionEnd()
 {
     uint64_t endTime = now();
 
@@ -70,45 +71,44 @@ void CucumberConsoleReporter::executionEnd()
     std::cout << "Finished in " << min << "m" << std::setprecision(3) << sec << "s" << std::endl;
 }
 
-void CucumberConsoleReporter::featureBegin(const CucumberFeature& feature)
+void ConsoleReporter::featureBegin(const CukeFeature& feature)
 {    
     std::cout << BOLD << "Feature: " << feature.name << RST << std::endl;
 }
 
-void CucumberConsoleReporter::featureEnd(const CucumberFeature& feature)
+void ConsoleReporter::featureEnd(const CukeFeature& feature)
 {
    
 }
 
-void CucumberConsoleReporter::featureSkip(const CucumberFeature& feature)
+void ConsoleReporter::featureSkip(const CukeFeature& feature)
 {
    
 }
 
-void CucumberConsoleReporter::scenarioBegin(const CucumberScenario& scenario)
+void ConsoleReporter::scenarioBegin(const CukeScenario& scenario)
 {
-    myScenarioSkipped = false;
     std::cout << Indent(2) << BOLD << "Scenario: " << scenario.name << RST << std::endl;
 }
 
-void CucumberConsoleReporter::scenarioEnd(const CucumberScenario& scenario)
+void ConsoleReporter::scenarioEnd(const CukeScenario& scenario)
 {
     if (passed == scenario.status) myPassedScenarios++;
     else if (failed == scenario.status) myFailedScenarios++;
     else if (skipped == scenario.status) mySkippedScenarios++;
 }
 
-void CucumberConsoleReporter::scenarioSkip(const CucumberScenario& scenario)
+void ConsoleReporter::scenarioSkip(const CukeScenario& scenario)
 {
-    myScenarioSkipped = true;
+
 }
 
-void CucumberConsoleReporter::stepBegin(const CucumberStep& step)
+void ConsoleReporter::stepBegin(const CukeStep& step)
 {
     
 }
 
-void CucumberConsoleReporter::stepEnd(const CucumberStep& step)
+void ConsoleReporter::stepEnd(const CukeStep& step)
 {
     if (undefined == step.status)
     {
@@ -141,15 +141,16 @@ void CucumberConsoleReporter::stepEnd(const CucumberStep& step)
         }
         std::cout << RST << std::endl;
     }
-}
-
-void CucumberConsoleReporter::stepSkip(const CucumberStep& step)
-{
-    if (!myScenarioSkipped)
+    else if (skipped == step.status)
     {
         mySkippedSteps++;
         std::cout << Indent(4) << CYN << step.action << " " << step.text << RST << std::endl;
     }
+}
+
+void ConsoleReporter::stepSkip(const CukeStep& step)
+{
+
 }
 
 std::ostream& cuke::internal::operator<<(std::ostream& os, const Indent& indent)

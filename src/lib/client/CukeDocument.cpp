@@ -6,7 +6,6 @@
 #include <cucumber/messages/gherkin_document.hpp>
 #include <cucumber/messages/pickle.hpp>
 #include <cucumber/messages/pickle_step.hpp>
-#include <iostream>
 
 namespace cms = cucumber::messages;
 
@@ -14,17 +13,17 @@ namespace cuke::internal
 {
     namespace
     {
-        void buildFeature(CucumberFeature& feature, const cms::gherkin_document& gherkinDocument);
-        void buildFeature(CucumberFeature& feature, const cms::feature& msgFeature);
-        void buildScenario(CucumberScenario& scenario, const cms::pickle& pickle);
-        void buildStep(CucumberStep& step, const cms::pickle_step& pickleStep);
+        void buildFeature(CukeFeature& feature, const cms::gherkin_document& gherkinDocument);
+        void buildFeature(CukeFeature& feature, const cms::feature& msgFeature);
+        void buildScenario(CukeScenario& scenario, const cms::pickle& pickle);
+        void buildStep(CukeStep& step, const cms::pickle_step& pickleStep);
 
-        void buildFeature(CucumberFeature& feature, const cms::gherkin_document& gherkinDocument)
+        void buildFeature(CukeFeature& feature, const cms::gherkin_document& gherkinDocument)
         {
             buildFeature(feature, *gherkinDocument.feature);
         }
 
-        void buildFeature(CucumberFeature& feature, const cms::feature& msgFeature)
+        void buildFeature(CukeFeature& feature, const cms::feature& msgFeature)
         {
             feature.name = msgFeature.name;
             feature.description = msgFeature.description;
@@ -34,7 +33,7 @@ namespace cuke::internal
             }
         }
 
-        void buildScenario(CucumberScenario& scenario, const cms::pickle& pickle)
+        void buildScenario(CukeScenario& scenario, const cms::pickle& pickle)
         {
             scenario.name = pickle.name;
             for (const auto& tag : pickle.tags)
@@ -43,13 +42,13 @@ namespace cuke::internal
             }
             for (const auto& pickleStep : pickle.steps)
             {
-                CucumberStep step;
+                CukeStep step;
                 buildStep(step, pickleStep);
                 scenario.steps.emplace_back(step);
             }
         }
 
-        void buildStep(CucumberStep& step, const cms::pickle_step& pickleStep)
+        void buildStep(CukeStep& step, const cms::pickle_step& pickleStep)
         {
             step.text = pickleStep.text;
             switch (pickleStep.type.value_or(cms::pickle_step_type::UNKNOWN))
@@ -111,7 +110,7 @@ namespace cuke::internal
                 buildFeature(feature, m);
             },
             .pickle = [&](const auto& m) {
-                CucumberScenario scenario;
+                CukeScenario scenario;
                 buildScenario(scenario, m);
                 feature.scenarios.emplace_back(scenario);
             },

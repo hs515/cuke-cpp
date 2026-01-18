@@ -38,7 +38,7 @@ namespace cuke::internal
     };
 
     /// @brief Cucumber step
-    struct CucumberStep : public CucumberRunnable
+    struct CukeStep : public CucumberRunnable
     {
         std::string action;
         std::string text;
@@ -57,22 +57,22 @@ namespace cuke::internal
     };
 
     /// @brief Cucumber Scenario
-    struct CucumberScenario : public CucumberTaggable
+    struct CukeScenario : public CucumberTaggable
     {
-        std::vector<CucumberStep> steps;
+        std::vector<CukeStep> steps;
     };
 
     /// @brief Cucumber Feature
-    struct CucumberFeature : public CucumberTaggable
+    struct CukeFeature : public CucumberTaggable
     {
         std::string filename;
         std::string description;
-        std::vector<CucumberScenario> scenarios;
+        std::vector<CukeScenario> scenarios;
     };
 
     struct CukeDocument
     {
-        CucumberFeature feature;
+        CukeFeature feature;
         void parseFeatureFile(const std::string& filename);
     };
 } // namespace cuke::internal

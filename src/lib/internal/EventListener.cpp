@@ -1,29 +1,29 @@
-#include "CucumberEventListener.hpp"
+#include "EventListener.hpp"
 
-#include "CucumberConsoleReporter.hpp"
-#include "CucumberHtmlReporter.hpp"
-#include "CucumberJsonReporter.hpp"
+#include "ConsoleReporter.hpp"
+#include "HtmlReporter.hpp"
+#include "JsonReporter.hpp"
 #include "ReporterOptions.hpp"
 
 using namespace cuke::internal;
 
-CucumberEventListener::CucumberEventListener(const ReporterOptions& options)
+EventListener::EventListener(const ReporterOptions& options)
 {
     if (options.consoleReport)
     {
-        add(std::make_shared<CucumberConsoleReporter>());
+        add(std::make_shared<ConsoleReporter>());
     }
     if (options.jsonReport)
     {
-        add(std::make_shared<CucumberJsonReporter>());
+        add(std::make_shared<JsonReporter>());
     }
     if (options.htmlReport)
     {
-        add(std::make_shared<CucumberHtmlReporter>());
+        add(std::make_shared<HtmlReporter>());
     }
 }
 
-void CucumberEventListener::executionBegin()
+void EventListener::executionBegin()
 {
     for (auto&& listener : myListeners)
     {
@@ -31,7 +31,7 @@ void CucumberEventListener::executionBegin()
     }
 }
 
-void CucumberEventListener::executionEnd()
+void EventListener::executionEnd()
 {
     for (auto&& listener : myListeners)
     {
@@ -39,7 +39,7 @@ void CucumberEventListener::executionEnd()
     }
 }
 
-void CucumberEventListener::featureBegin(const CucumberFeature& feature)
+void EventListener::featureBegin(const CukeFeature& feature)
 {    
     for (auto&& listener : myListeners)
     {
@@ -47,7 +47,7 @@ void CucumberEventListener::featureBegin(const CucumberFeature& feature)
     }
 }
 
-void CucumberEventListener::featureEnd(const CucumberFeature& feature)
+void EventListener::featureEnd(const CukeFeature& feature)
 {
     for (auto&& listener : myListeners)
     {
@@ -55,7 +55,7 @@ void CucumberEventListener::featureEnd(const CucumberFeature& feature)
     }
 }
 
-void CucumberEventListener::featureSkip(const CucumberFeature& feature)
+void EventListener::featureSkip(const CukeFeature& feature)
 {
     for (auto&& listener : myListeners)
     {
@@ -63,7 +63,7 @@ void CucumberEventListener::featureSkip(const CucumberFeature& feature)
     }
 }
 
-void CucumberEventListener::scenarioBegin(const CucumberScenario& scenario)
+void EventListener::scenarioBegin(const CukeScenario& scenario)
 {
     for (auto&& listener : myListeners)
     {
@@ -71,7 +71,7 @@ void CucumberEventListener::scenarioBegin(const CucumberScenario& scenario)
     }
 }
 
-void CucumberEventListener::scenarioEnd(const CucumberScenario& scenario)
+void EventListener::scenarioEnd(const CukeScenario& scenario)
 {
     for (auto&& listener : myListeners)
     {
@@ -79,7 +79,7 @@ void CucumberEventListener::scenarioEnd(const CucumberScenario& scenario)
     }
 }
 
-void CucumberEventListener::scenarioSkip(const CucumberScenario& scenario)
+void EventListener::scenarioSkip(const CukeScenario& scenario)
 {
     for (auto&& listener : myListeners)
     {
@@ -87,7 +87,7 @@ void CucumberEventListener::scenarioSkip(const CucumberScenario& scenario)
     }
 }
 
-void CucumberEventListener::stepBegin(const CucumberStep& step)
+void EventListener::stepBegin(const CukeStep& step)
 {
     for (auto&& listener : myListeners)
     {
@@ -95,7 +95,7 @@ void CucumberEventListener::stepBegin(const CucumberStep& step)
     }
 }
 
-void CucumberEventListener::stepEnd(const CucumberStep& step)
+void EventListener::stepEnd(const CukeStep& step)
 {
     for (auto&& listener : myListeners)
     {
@@ -103,7 +103,7 @@ void CucumberEventListener::stepEnd(const CucumberStep& step)
     }
 }
 
-void CucumberEventListener::stepSkip(const CucumberStep& step)
+void EventListener::stepSkip(const CukeStep& step)
 {
     for (auto&& listener : myListeners)
     {
@@ -111,7 +111,7 @@ void CucumberEventListener::stepSkip(const CucumberStep& step)
     }
 }
 
-void CucumberEventListener::add(const std::shared_ptr<CucumberEventListenerIF> listener)
+void EventListener::add(const std::shared_ptr<EventListenerIF> listener)
 {
     myListeners.push_back(listener);
 }

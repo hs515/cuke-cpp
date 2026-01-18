@@ -1,4 +1,4 @@
-#include "CucumberJsonReporter.hpp"
+#include "JsonReporter.hpp"
 
 #include "client/CukeDocument.hpp"
 #include "CukeUtilities.hpp"
@@ -24,13 +24,13 @@ static std::string statusToString(CucumberExecutionStatus status)
     }
 }
 
-void CucumberJsonReporter::executionBegin()
+void JsonReporter::executionBegin()
 {
     myJson["startTime"] = now();
     myJson["features"] = json::array();
 }
 
-void CucumberJsonReporter::executionEnd()
+void JsonReporter::executionEnd()
 {
     myJson["endTime"] = now();
     myJson["duration"] = myJson["endTime"].get<uint64_t>() - myJson["startTime"].get<uint64_t>();
@@ -41,7 +41,7 @@ void CucumberJsonReporter::executionEnd()
     dumpReport();
 }
 
-void CucumberJsonReporter::featureBegin(const CucumberFeature& feature)
+void JsonReporter::featureBegin(const CukeFeature& feature)
 {
     json featureNode;
     json tagsNode = json::array();
@@ -63,7 +63,7 @@ void CucumberJsonReporter::featureBegin(const CucumberFeature& feature)
     myFeatureFailedScenarios = 0;
 }
 
-void CucumberJsonReporter::featureEnd(const CucumberFeature& feature)
+void JsonReporter::featureEnd(const CukeFeature& feature)
 {
     (*myFeatureNodePtr)["status"] = statusToString(feature.status);
     (*myFeatureNodePtr)["startTime"] = feature.start_time;
@@ -77,7 +77,7 @@ void CucumberJsonReporter::featureEnd(const CucumberFeature& feature)
     else if (failed == feature.status) myFailedFeatures++; 
 }
 
-void CucumberJsonReporter::featureSkip(const CucumberFeature& feature)
+void JsonReporter::featureSkip(const CukeFeature& feature)
 {
     featureBegin(feature);
     mySkippedFeatures++;
@@ -85,7 +85,7 @@ void CucumberJsonReporter::featureSkip(const CucumberFeature& feature)
     featureEnd(feature);
 }
 
-void CucumberJsonReporter::scenarioBegin(const CucumberScenario& scenario)
+void JsonReporter::scenarioBegin(const CukeScenario& scenario)
 {
     json scenarioNode;
     json tagsNode = json::array();
@@ -103,7 +103,7 @@ void CucumberJsonReporter::scenarioBegin(const CucumberScenario& scenario)
     myScenarioNodePtr = &treeNode;
 }
 
-void CucumberJsonReporter::scenarioEnd(const CucumberScenario& scenario)
+void JsonReporter::scenarioEnd(const CukeScenario& scenario)
 {
     (*myScenarioNodePtr)["startTime"] = scenario.start_time;
     (*myScenarioNodePtr)["endTime"] = scenario.end_time;
@@ -114,14 +114,14 @@ void CucumberJsonReporter::scenarioEnd(const CucumberScenario& scenario)
     else if (failed == scenario.status) myFeatureFailedScenarios++; 
 }
 
-void CucumberJsonReporter::scenarioSkip(const CucumberScenario& scenario)
+void JsonReporter::scenarioSkip(const CukeScenario& scenario)
 {
     scenarioBegin(scenario);
     (*myScenarioNodePtr)["duration"] = 0;
     myFeatureSkippedScenarios++;
 }
 
-void CucumberJsonReporter::stepBegin(const CucumberStep& step)
+void JsonReporter::stepBegin(const CukeStep& step)
 {
     json stepNode;
     stepNode["keyword"] = step.action;
@@ -130,7 +130,7 @@ void CucumberJsonReporter::stepBegin(const CucumberStep& step)
     myStepNodePtr = &treeNode;
 }
 
-void CucumberJsonReporter::stepEnd(const CucumberStep& step)
+void JsonReporter::stepEnd(const CukeStep& step)
 {
     (*myStepNodePtr)["status"] = statusToString(step.status);
     (*myStepNodePtr)["error"] = step.error;
@@ -139,18 +139,18 @@ void CucumberJsonReporter::stepEnd(const CucumberStep& step)
     (*myStepNodePtr)["duration"] = step.end_time - step.start_time;
 }
 
-void CucumberJsonReporter::stepSkip(const CucumberStep& step)
+void JsonReporter::stepSkip(const CukeStep& step)
 {
     stepBegin(step);
     stepEnd(step);
 }
 
-const json& CucumberJsonReporter::getJson() const
+const json& JsonReporter::getJson() const
 {
     return myJson;
 }
 
-void CucumberJsonReporter::dumpReport()
+void JsonReporter::dumpReport()
 {
     const std::filesystem::path destDir("reports");
     if (!std::filesystem::exists(destDir))

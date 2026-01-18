@@ -7,8 +7,11 @@
 
 namespace cuke::internal
 {
+    /**
+     * Get current time in milliseconds since epoch
+     * @return current time in milliseconds since epoch
+     */
     uint64_t now();
-
 } // namespace cuke::internal
 
 #endif // CUKE_INTERNAL_UTILITIES_HPP

@@ -11,20 +11,20 @@ list(APPEND CUKE_CPP_LIB_ALL_SOURCES ${CUKE_CPP_LIB_SOURCES})
 set(CUKE_CPP_LIB_SOURCES
     client/CukeDocument.cpp
     client/CukeDocument.hpp
-    internal/CucumberConsoleReporter.cpp
-    internal/CucumberConsoleReporter.hpp
-    internal/CucumberEventListener.cpp
-    internal/CucumberEventListener.hpp
-    internal/CucumberHtmlReporter.cpp
-    internal/CucumberHtmlReporter.hpp
-    internal/CucumberJsonReporter.cpp
-    internal/CucumberJsonReporter.hpp
+    internal/ConsoleReporter.cpp
+    internal/ConsoleReporter.hpp
     internal/CukeRunner.cpp
     internal/CukeRunner.hpp
     internal/CukeUtilities.cpp
     internal/CukeUtilities.hpp
+    internal/EventListener.cpp
+    internal/EventListener.hpp
     internal/FilterTagOptions.cpp
     internal/FilterTagOptions.hpp
+    internal/HtmlReporter.cpp
+    internal/HtmlReporter.hpp
+    internal/JsonReporter.cpp
+    internal/JsonReporter.hpp
     internal/ReporterOptions.cpp
     internal/ReporterOptions.hpp
     server/CukeServer.cpp

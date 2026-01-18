@@ -1,6 +1,4 @@
-#include "CucumberHtmlReporter.hpp"
-
-#include "client/CukeDocument.hpp"
+#include "HtmlReporter.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -12,7 +10,7 @@ using json = nlohmann::json;
 static void copyAll(const std::filesystem::path& src, const std::filesystem::path& dest);
 static void render(const std::filesystem::path& tmpl, const std::filesystem::path& htmlFile, const json& data);
 
-void CucumberHtmlReporter::dumpReport()
+void HtmlReporter::dumpReport()
 {
     const std::filesystem::path srcDir("templates");
     const std::filesystem::path destDir("reports");
