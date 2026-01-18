@@ -13,7 +13,6 @@ namespace cuke::internal
     class CukeScenario;
     class CukeStep;
 
-
     class JsonReporter : public EventListenerIF
     {
     public:

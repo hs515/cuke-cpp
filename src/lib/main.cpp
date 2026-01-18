@@ -1,7 +1,7 @@
-#include <client/CukeDocument.hpp>
-#include <internal/CukeRunner.hpp>
-#include <internal/FilterTagOptions.hpp>
-#include <internal/ReporterOptions.hpp>
+#include <CukeDocument.hpp>
+#include <CukeRunner.hpp>
+#include <FilterTagOptions.hpp>
+#include <ReporterOptions.hpp>
 
 #include <filesystem>
 #include <iostream>

@@ -1,11 +1,11 @@
 #ifndef CUKE_INTERNAL_CUKERUNNER_HPP
 #define CUKE_INTERNAL_CUKERUNNER_HPP
 
+#include "CukeDocument.hpp"
+#include "CukeServer.hpp"
 #include "EventListener.hpp"
 #include "FilterTagOptions.hpp"
 #include "ReporterOptions.hpp"
-#include "client/CukeDocument.hpp"
-#include "server/CukeServer.hpp"
 
 #include <string>
 

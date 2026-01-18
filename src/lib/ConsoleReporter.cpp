@@ -1,6 +1,6 @@
 #include "ConsoleReporter.hpp"
 
-#include "client/CukeDocument.hpp"
+#include "CukeDocument.hpp"
 #include "CukeUtilities.hpp"
 
 #include <chrono>
