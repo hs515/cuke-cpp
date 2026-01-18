@@ -75,7 +75,7 @@
                                     <td class="percentage"><template>{{featureFailedPercent}}</template> %</td>
                                  </tr>
                                  <template>
-                                 {{#skippedFeatures}}
+                                 {{#skipped}}
                                  <tr>
                                     <td>
                                        <p data-toggle="tooltip" data-placement="left"
@@ -86,7 +86,7 @@
                                     </td>
                                     <td class="percentage">{{featureSkippedPercent}} %</td>
                                  </tr>
-                                 {{/skippedFeatures}}
+                                 {{/skipped}}
                                  </template>
                               </table>
                            </td>
@@ -244,21 +244,21 @@
                               {{#features}}
                               <tr>
                                  <td>
-                                    <a href="{{featureFileName}}.html">{{featureName}}</a>
+                                    <a href="{{featureFileName}}.html">{{name}}</a>
                                  </td>
                                  <td class="text-center">
-                                    <i class="fa fa-tags fa-lg" data-toggle="tooltip" data-placement="top" title="{{#featureTags}}{{.}} {{/featureTags}}"></i>
+                                    <i class="fa fa-tags fa-lg" data-toggle="tooltip" data-placement="top" title="{{#tags}}{{.}} {{/tags}}"></i>
                                  </td>
                                  <td class="text-center">
-                                    <i class="fa fa-{{statusIcon}} {{statusText}}-color fa-lg" data-toggle="tooltip" data-placement="top" title="{{statusText}}">
-                                    <span>arrow-circle-right {{statusText}}-color</span>
+                                    <i class="fa fa-{{statusIcon}} {{status}}-color fa-lg" data-toggle="tooltip" data-placement="top" title="{{status}}">
+                                    <span>arrow-circle-right {{status}}-color</span>
                                     </i>
                                  </td>
                                  <td>{{formattedDuration}}</td>
                                  <td class="text-right ">{{totalScenarios}}</td>
-                                 <td class="text-right none">{{passedScenarios}}</td>
-                                 <td class="text-right none">{{failedScenarios}}</td>
-                                 <td class="text-right ">{{skippedScenarios}}</td>
+                                 <td class="text-right none">{{passed}}</td>
+                                 <td class="text-right none">{{failed}}</td>
+                                 <td class="text-right ">{{skipped}}</td>
                               </tr>
                               {{/features}}
                               </template>

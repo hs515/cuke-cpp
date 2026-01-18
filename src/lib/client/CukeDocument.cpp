@@ -107,6 +107,7 @@ namespace cuke::internal
         cucumber::gherkin::app::callbacks cbs{
             .source = [&](const auto& m) {},
             .ast = [&](const auto& m) {
+                feature.filename = filename;
                 buildFeature(feature, m);
             },
             .pickle = [&](const auto& m) {

@@ -5,7 +5,6 @@
 #include <iostream>
 
 using namespace cuke::internal;
-using json = nlohmann::json;
 
 static void copyAll(const std::filesystem::path& src, const std::filesystem::path& dest);
 static void render(const std::filesystem::path& tmpl, const std::filesystem::path& htmlFile, const json& data);
@@ -15,9 +14,9 @@ void HtmlReporter::dumpReport()
     const std::filesystem::path srcDir("templates");
     const std::filesystem::path destDir("reports");
 
-    if (!std::filesystem::exists(destDir / "features"))
+    if (!std::filesystem::exists(destDir))
     {
-        std::filesystem::create_directories(destDir / "features");
+        std::filesystem::create_directories(destDir);
     }
 
     // Generate features html
@@ -25,12 +24,11 @@ void HtmlReporter::dumpReport()
     json& features = result["features"];
     for (auto&& feature : features)
     {
-        if (feature["featureScenarios"].size() != 0)
+        if (feature["elements"].size() != 0)
         {
-            const std::filesystem::path filepath(feature["featureFileName"].get<std::string>());
+            const std::filesystem::path filepath(feature["uri"].get<std::string>());
             const auto filename = filepath.filename().string() + ".html";
-            const auto featureDest = destDir / "features" / filename;
-            render(srcDir / "feature.html", featureDest, feature);
+            render(srcDir / "feature.html", destDir / filename, feature);
         }
     }
 

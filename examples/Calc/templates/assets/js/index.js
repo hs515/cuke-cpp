@@ -19,65 +19,50 @@ $(document).ready(function () {
     data.totalPassedScenarios = 0;
     data.totalFailedScenarios = 0;
     data.totalSkippedScenarios = 0;
-    data.passedFeatures = 0;
-    data.failedFeatures = 0;
-    data.skippedFeatures = 0;
 
     data.features = data.features.filter((feature) => {
-        return feature.skippedScenarios + 
-               feature.passedScenarios + 
-               feature.failedScenarios;
+        return feature.skipped + feature.passed + feature.failed;
     });
     
+    data.totalFeatures = data.passed + data.failed + data.skipped;
+
     data.features.forEach((feature) => {
+        feature.featureFileName = feature.uri.split('/').pop();
 
-        data.totalSkippedScenarios += feature.skippedScenarios;
-        data.totalPassedScenarios += feature.passedScenarios;
-        data.totalFailedScenarios += feature.failedScenarios;
+        data.totalSkippedScenarios += feature.skipped;
+        data.totalPassedScenarios += feature.passed;
+        data.totalFailedScenarios += feature.failed;
 
-        feature.totalScenarios = feature.passedScenarios 
-            + feature.failedScenarios
-            + feature.skippedScenarios;
+        feature.totalScenarios = feature.passed + feature.failed + feature.skipped;
 
         data.totalScenarios += feature.totalScenarios;
         
         feature.formattedDuration = formatDuration(feature.duration);
 
-        if (feature.status == "passed" || feature.status == 1) {
-            feature.statusText = "passed";
+        if (feature.status == "passed") {
             feature.statusIcon = "check-circle";
-            data.passedFeatures++;
-        } else if (feature.status == "failed" || feature.status == 2) {
-            feature.statusText = "failed";
+        } else if (feature.status == "failed") {
             feature.statusIcon = "exclamation-circle";
-            data.failedFeatures++;
-        } else if (feature.status == "skipped" || feature.status == 5) {
-            feature.statusText = "skipped";
+        } else if (feature.status == "skipped") {
             feature.statusIcon = "arrow-circle-right";
-            data.skippedFeatures++;
         }
     });
 
-    data.totalFeatures = data.passedFeatures 
-        + data.failedFeatures
-        + data.skippedFeatures;
-
-    data.featurePassedPercent = percent(data.passedFeatures, data.totalFeatures);
-    data.featureFailedPercent = percent(data.failedFeatures, data.totalFeatures);
-    data.featureSkippedPercent = percent(data.skippedFeatures, data.totalFeatures);
+    data.featurePassedPercent = percent(data.passed, data.totalFeatures);
+    data.featureFailedPercent = percent(data.failed, data.totalFeatures);
+    data.featureSkippedPercent = percent(data.skipped, data.totalFeatures);
 
     data.passedScenariosPercent = percent(data.totalPassedScenarios, data.totalScenarios);
     data.failedScenariosPercent = percent(data.totalFailedScenarios, data.totalScenarios);
     data.skippedScenariosPercent = percent(data.totalSkippedScenarios, data.totalScenarios);
 
-    const duration = data.endTime - data.startTime;
-    const startDate = new Date(data.startTime);
-    const endDate = new Date(data.endTime);
+    const startDate = new Date(data.start_time);
+    const endDate = new Date(data.end_time);
     data.executionStartTime = startDate.toLocaleDateString() + " " + startDate.toLocaleTimeString();
     data.executionEndTime = endDate.toLocaleDateString() + " " + endDate.toLocaleTimeString();
-    data.executionRunTimeInHours = (duration / 3600000).toFixed(2);
-    data.executionRunTimeInMins = (duration / 60000).toFixed(2);
-    data.executionRunTimeInSeconds = (duration / 1000).toFixed(2);
+    data.executionRunTimeInHours = (data.duration / 3600000).toFixed(2);
+    data.executionRunTimeInMins = (data.duration / 60000).toFixed(2);
+    data.executionRunTimeInSeconds = (data.duration / 1000).toFixed(2);
 
     data.copyrightYear = new Date().getFullYear();
     data.copyrightOrganization = "XXX LLC.";
@@ -112,12 +97,12 @@ $(document).ready(function () {
             ],
             datasets: [{
                 data: [
-                    data.passedFeatures,
-                    data.failedFeatures,
+                    data.passed,
+                    data.failed,
                     0,
                     0,
                     0,
-                    data.skippedFeatures
+                    data.skipped
                 ],
                 backgroundColor: [
                     "#26B99A",

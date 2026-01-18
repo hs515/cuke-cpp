@@ -5,15 +5,15 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Cuke CPP Test Automation - Execution Report</title>
-      <link rel="stylesheet" href="../css/bootstrap.min.css">
-      <link rel="stylesheet" href="../css/font-awesome.min.css">
-      <link rel="stylesheet" href="../css/feature.css">
+      <link rel="stylesheet" href="css/bootstrap.min.css">
+      <link rel="stylesheet" href="css/font-awesome.min.css">
+      <link rel="stylesheet" href="css/feature.css">
    </head>
    <body>
       <nav class="navbar" style="background-color: #6400A0; color:#fff">
          <div class="container-fluid">
             <div class="navbar-header">
-               <a class="navbar-brand" href="../index.html">
+               <a class="navbar-brand" href="index.html">
                <i class="fa fa-arrow-left" style="color:#fff"><span>Back</span></i>
                </a>
             </div>
@@ -27,9 +27,9 @@
             <div class="tags">
                <i class="fa fa-tags fa-lg"></i>
                <template>
-                  {{#featureTags}}
+                  {{#tags}}
                   <span class="tag">{{.}}</span>
-                  {{/featureTags}}
+                  {{/tags}}
                </template>
             </div>
             <h1>Feature:
@@ -38,7 +38,7 @@
             <p>
             </p>
             <p><strong>File name:</strong>
-               <template>{{featureFileName}}</template>
+               <template>{{uri}}</template>
             </p>
          </div>
          <div class="clearfix"></div>
@@ -99,7 +99,7 @@
                                           </td>
                                           <td class="percentage">{{failedScenariosPercent}} %</td>
                                        </tr>
-                                       {{#skippedScenarios}}
+                                       {{#skipped}}
                                        <tr>
                                           <td>
                                              <p data-toggle="tooltip" data-placement="left" title="" data-original-title="Scenario is skipped">
@@ -109,7 +109,7 @@
                                           </td>
                                           <td class="percentage">{{skippedScenariosPercent}} %</td>
                                        </tr>
-                                       {{/skippedScenarios}}
+                                       {{/skipped}}
                                     </template>
                                     </tbody>
                                  </table>
@@ -200,37 +200,34 @@
          </div>
          <div class="row">
             <template>
-               {{#featureScenarios}}
+               {{#elements}}
                <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="x_panel">
                      <div class="x_title">
                         <div class="tags">
                            <i class="fa fa-tags fa-lg"></i>
-                              {{#scenarioTags}}
-                              <span class="tag">{{.}}</span>
-                              {{/scenarioTags}}
+                           {{#tags}}
+                           <span class="tag">{{.}}</span>
+                           {{/tags}}
                         </div>
-                        <h2>Scenario: <small>{{scenarioName}}</small></h2>
+                        <h2>Scenario: <small>{{name}}</small></h2>
                         <ul class="nav navbar-right panel_toolbox">
-                           <li>
-                              <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                           </li>
-                     {{#undefinedSteps}}
+                           <li><a class="collapse-link"><i class="fa fa-chevron-{{defaultArrow}}"></i></a></li>
+                           {{#undefinedSteps}}
                            <li><span class="step not-defined-background" data-toggle="tooltip" title="Undefined steps">{{undefinedSteps}}</span></li>
-						   {{/undefinedSteps}}
-                           </li>
-                     {{#ambiguousSteps}}
+                           {{/undefinedSteps}}
+                           {{#ambiguousSteps}}
                            <li><span class="step ambiguous-background" data-toggle="tooltip" title="Ambiguous steps">{{ambiguousSteps}}</span></li>
-						   {{/ambiguousSteps}}
-						   {{#skippedSteps}}
+                           {{/ambiguousSteps}}
+                           {{#skippedSteps}}
                            <li><span class="step skipped-background" data-toggle="tooltip" title="Skipped steps">{{skippedSteps}}</span></li>
-						   {{/skippedSteps}}
-						   {{#failedSteps}}
+                           {{/skippedSteps}}
+                           {{#failedSteps}}
                            <li><span class="step failed-background" data-toggle="tooltip" title="Failed steps">{{failedSteps}}</span></li>
-						   {{/failedSteps}}
-						   {{#passedSteps}}
+                           {{/failedSteps}}
+                           {{#passedSteps}}
                            <li><span class="step passed-background" data-toggle="tooltip" title="Passed steps">{{passedSteps}}</span></li>
-						   {{/passedSteps}}
+                           {{/passedSteps}}
                            <li>
                               <span style="font-size:1.2em"> Duration:</span>
                               <span style="padding-right:5em">{{formattedDuration}}</span>
@@ -239,32 +236,31 @@
                               <span style="font-size:1.2em"> Start:</span>
                               <span style="padding-right:5em">{{startTime}}</span>
                            </li>
-                           
                         </ul>
                         <div class="clearfix"></div>
                      </div>
-                     <div class="x_content">
-                        {{#scenarioSteps}}
+		     <div class="x_content" style={{defaultStyle}}>
+                        {{#steps}}
                         <div class="scenario-step-container">
-                           <div class="label" data-toggle="tooltip" data-placement="top" title="{{statusText}}">
-                              <i class="fa fa-arrow-circle-right fa-2x {{statusText}}-color"></i>
+                           <div class="label" data-toggle="tooltip" data-placement="top" title="{{status}}">
+                              <i class="fa fa-arrow-circle-right fa-2x {{status}}-color"></i>
                            </div>
                            <div class="text">
                               <span class="keyword highlight">{{keyword}} </span>
-                              {{text}} {{#error}}<a href="#error{{id}}-error" data-toggle="collapse" class="" aria-expanded="true">+ Show Error</a>{{/error}}
+                              {{name}} {{#error_message}}<a href="#error{{id}}-error" data-toggle="collapse" class="" aria-expanded="true">+ Show Error</a>{{/error_message}}
                               <span class="duration">{{formattedDuration}}</span>
                            </div>
                         </div>
-                        {{#error}}
+                        {{#error_message}}
                         <div id="error{{id}}-error" class="scenario-step-collapse collapse" aria-expanded="false" style="height: 0px;">
-                           <pre class="info">{{error}}</pre>
+                           <pre class="info">{{error_message}}</pre>
                         </div>
-                        {{/error}}
-                        {{/scenarioSteps}}
+                        {{/error_message}}
+                        {{/steps}}
                      </div>
                   </div>
                </div>
-               {{/featureScenarios}}
+               {{/elements}}
             </template>
          </div>
       </div>
@@ -272,10 +268,10 @@
          <p class="text-center"><template>Copyright &copy; {{copyrightYear}}, {{copyrightOrganization}}</template></p>
       </div>
       <!-- data -->
-      <script src="../js/jquery-3.2.1.min.js"></script>
-      <script src="../js/bootstrap.min.js"></script>
-      <script src="../js/Chart.min.js"></script>
-      <script src="../js/mustache.min.js"></script>
-      <script src="../js/feature.js"></script>
+      <script src="js/jquery-3.2.1.min.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+      <script src="js/Chart.min.js"></script>
+      <script src="js/mustache.min.js"></script>
+      <script src="js/feature.js"></script>
    </body>
 </html>

@@ -5,13 +5,14 @@
 
 #include <nlohmann/json.hpp>
 
+using json = nlohmann::ordered_json;
+
 namespace cuke::internal
 {
     class CukeFeature;
     class CukeScenario;
     class CukeStep;
 
-    using json = nlohmann::json;
 
     class JsonReporter : public EventListenerIF
     {

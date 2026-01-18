@@ -14,55 +14,51 @@ function formatDuration(duration)
 
 $(document).ready(function() {
 
-    let totalScenarios = data.passedScenarios  
-        + data.failedScenarios
-        + data.skippedScenarios;
+    let totalScenarios = data.passed + data.failed + data.skipped;
 
     data.totalScenarios = totalScenarios;
     let totalDuration = 0;
 
-    data.passedScenariosPercent = (data.passedScenarios * 100 / totalScenarios).toFixed(2);
-    data.failedScenariosPercent = (data.failedScenarios * 100 / totalScenarios).toFixed(2);
-    data.skippedScenariosPercent = (data.skippedScenarios * 100 / totalScenarios).toFixed(2);
+    data.passedScenariosPercent = (data.passed * 100 / totalScenarios).toFixed(2);
+    data.failedScenariosPercent = (data.failed * 100 / totalScenarios).toFixed(2);
+    data.skippedScenariosPercent = (data.skipped * 100 / totalScenarios).toFixed(2);
 
-    const duration = data.endTime - data.startTime;
-    const startDate = new Date(data.startTime);
-    const endDate = new Date(data.endTime);
+    const startDate = new Date(data.start_time);
+    const endDate = new Date(data.end_time);
     data.executionStartTime = startDate.toLocaleDateString() + " " + startDate.toLocaleTimeString();
     data.executionEndTime = endDate.toLocaleDateString() + " " + endDate.toLocaleTimeString();
-    data.executionRunTimeInHours = (duration / 3600000).toFixed(2);
-    data.executionRunTimeInMins = (duration / 60000).toFixed(2);
-    data.executionRunTimeInSeconds = (duration / 1000).toFixed(2);
+    data.executionRunTimeInHours = (data.duration / 3600000).toFixed(2);
+    data.executionRunTimeInMins = (data.duration / 60000).toFixed(2);
+    data.executionRunTimeInSeconds = (data.duration / 1000).toFixed(2);
 
     data.copyrightYear = new Date().getFullYear();
     data.copyrightOrganization = "XXX LLC.";
 
-    data.featureScenarios.forEach((scenario, scenarioIndex) => {
+    data.elements.forEach((scenario, scenarioIndex) => {
         scenario.passedSteps = 0;
         scenario.failedSteps = 0;
         scenario.undefinedSteps = 0;
         scenario.ambiguousSteps = 0;
         scenario.skippedSteps = 0;
+        scenario.defaultArrow = "up";
+        scenario.defaultStyle = "";
 
-		scenario.scenarioSteps.forEach((step, stepIndex) => {
-            if (step.status == 1) {
-                step.statusText = "passed";
+        scenario.steps.forEach((step, stepIndex) => {
+            if (step.status == "passed") {
+                scenario.defaultArrow = "down";
+                scenario.defaultStyle = "display: none;";
                 scenario.passedSteps++;
             } 
-            else if (step.status == 2) {
-                step.statusText = "failed";
+            else if (step.status == "failed") {
                 scenario.failedSteps++;
             } 
-            else if (step.status == 3) {
-                step.statusText = "undefined";
+            else if (step.status == "undefined") {
                 scenario.undefinedSteps++;
             } 
-            else if (step.status == 4) {
-                step.statusText = "ambiguous";
+            else if (step.status == "ambiguous") {
                 scenario.ambiguousSteps++;
             } 
-            else if (step.status == 5) {
-                step.statusText = "skipped";
+            else if (step.status == "skipped") {
                 scenario.skippedSteps++;
             } 
 
@@ -70,16 +66,15 @@ $(document).ready(function() {
             step.formattedDuration = formatDuration(step.duration);
         });
         
-        let scenarioDuration = scenario.endTime - scenario.startTime;
-        let scenarioStartTime = new Date(scenario.startTime);
-        scenario.formattedDuration = formatDuration(scenarioDuration);
+        let scenarioStartTime = new Date(scenario.start_time);
+        scenario.formattedDuration = formatDuration(scenario.duration);
         scenario.startTime = scenarioStartTime.toLocaleDateString() + " " + scenarioStartTime.toLocaleTimeString();
-        totalDuration += scenarioDuration;
-	});
+        totalDuration += scenario.duration;
+    });
 
     data.formattedTotalDuration = formatDuration(totalDuration);
 
-    document.title = "Cuke CPP Test Report - " + data.featureName;
+    document.title = "Cuke CPP Test Report - " + data.uri;
 
     $('template').each(function() {
         let html = Mustache.render($(this).html(), data);
@@ -105,10 +100,10 @@ $(document).ready(function() {
             ],
             datasets: [{
                 data: [
-                    data.passedScenarios,
-                    data.failedScenarios,
+                    data.passed,
+                    data.failed,
                     0,
-                    data.skippedScenarios,
+                    data.skipped,
                     0,
                     0
                 ],

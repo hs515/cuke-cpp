@@ -8,7 +8,6 @@
 #include <iostream>
 
 using namespace cuke::internal;
-using json = nlohmann::json;
 
 static std::string statusToString(CucumberExecutionStatus status)
 {
@@ -26,17 +25,22 @@ static std::string statusToString(CucumberExecutionStatus status)
 
 void JsonReporter::executionBegin()
 {
-    myJson["startTime"] = now();
+    myJson["start_time"] = now();
+    myJson["end_time"] = now();
+    myJson["duration"] = 0;
+    myJson["passed"] = 0;
+    myJson["failed"] = 0;
+    myJson["skipped"] = 0;
     myJson["features"] = json::array();
 }
 
 void JsonReporter::executionEnd()
 {
-    myJson["endTime"] = now();
-    myJson["duration"] = myJson["endTime"].get<uint64_t>() - myJson["startTime"].get<uint64_t>();
-    myJson["passedFeatures"] = myPassedFeatures;
-    myJson["failedFeatures"] = myFailedFeatures;
-    myJson["skippedFeatures"] = mySkippedFeatures;
+    myJson["end_time"] = now();
+    myJson["duration"] = myJson["end_time"].get<uint64_t>() - myJson["start_time"].get<uint64_t>();
+    myJson["passed"] = myPassedFeatures;
+    myJson["failed"] = myFailedFeatures;
+    myJson["skipped"] = mySkippedFeatures;
 
     dumpReport();
 }
@@ -51,10 +55,20 @@ void JsonReporter::featureBegin(const CukeFeature& feature)
         tagsNode.emplace_back(tag);
     }
 
-    featureNode["featureName"] = feature.name;
-    featureNode["featureFileName"] = feature.filename;
-    featureNode["featureTags"] = tagsNode;
-    featureNode["featureScenarios"] = json::array();
+    const std::filesystem::path filepath(feature.filename);
+    featureNode["uri"] = feature.filename;
+    featureNode["keyword"] = "Feature";
+    featureNode["name"] = feature.name;
+    featureNode["description"] = feature.description;
+    featureNode["tags"] = tagsNode;
+    featureNode["status"] = statusToString(pending);
+    featureNode["start_time"] = now();
+    featureNode["end_time"] = now();
+    featureNode["duration"] = 0;
+    featureNode["passed"] = 0;
+    featureNode["failed"] = 0;
+    featureNode["skipped"] = 0;
+    featureNode["elements"] = json::array();
 
     myFeatureNodePtr = &(myJson["features"].emplace_back(featureNode));
 
@@ -66,12 +80,12 @@ void JsonReporter::featureBegin(const CukeFeature& feature)
 void JsonReporter::featureEnd(const CukeFeature& feature)
 {
     (*myFeatureNodePtr)["status"] = statusToString(feature.status);
-    (*myFeatureNodePtr)["startTime"] = feature.start_time;
-    (*myFeatureNodePtr)["endTime"] = feature.end_time;
+    (*myFeatureNodePtr)["start_time"] = feature.start_time;
+    (*myFeatureNodePtr)["end_time"] = feature.end_time;
     (*myFeatureNodePtr)["duration"] = feature.end_time - feature.start_time;
-    (*myFeatureNodePtr)["passedScenarios"] = myFeaturePassedScenarios;
-    (*myFeatureNodePtr)["failedScenarios"] = myFeatureFailedScenarios;
-    (*myFeatureNodePtr)["skippedScenarios"] = myFeatureSkippedScenarios;
+    (*myFeatureNodePtr)["passed"] = myFeaturePassedScenarios;
+    (*myFeatureNodePtr)["failed"] = myFeatureFailedScenarios;
+    (*myFeatureNodePtr)["skipped"] = myFeatureSkippedScenarios;
 
     if (passed == feature.status) myPassedFeatures++; 
     else if (failed == feature.status) myFailedFeatures++; 
@@ -79,10 +93,8 @@ void JsonReporter::featureEnd(const CukeFeature& feature)
 
 void JsonReporter::featureSkip(const CukeFeature& feature)
 {
-    featureBegin(feature);
     mySkippedFeatures++;
     myFeatureSkippedScenarios = feature.scenarios.size();
-    featureEnd(feature);
 }
 
 void JsonReporter::scenarioBegin(const CukeScenario& scenario)
@@ -95,29 +107,33 @@ void JsonReporter::scenarioBegin(const CukeScenario& scenario)
         tagsNode.emplace_back(tag);
     }
 
-    scenarioNode["scenarioName"] = scenario.name;
-    scenarioNode["scenarioTags"] = tagsNode;
-    scenarioNode["scenarioSteps"] = json::array();
+    scenarioNode["keyword"] = "Scenario";
+    scenarioNode["name"] = scenario.name;
+    scenarioNode["description"] = "";
+    scenarioNode["tags"] = tagsNode;
+    scenarioNode["status"] = statusToString(pending);
+    scenarioNode["start_time"] = now();
+    scenarioNode["end_time"] = now();
+    scenarioNode["duration"] = 0;
+    scenarioNode["steps"] = json::array();
 
-    json& treeNode = (*myFeatureNodePtr)["featureScenarios"].emplace_back(scenarioNode);
+    json& treeNode = (*myFeatureNodePtr)["elements"].emplace_back(scenarioNode);
     myScenarioNodePtr = &treeNode;
 }
 
 void JsonReporter::scenarioEnd(const CukeScenario& scenario)
 {
-    (*myScenarioNodePtr)["startTime"] = scenario.start_time;
-    (*myScenarioNodePtr)["endTime"] = scenario.end_time;
-    (*myScenarioNodePtr)["duration"] = scenario.end_time - scenario.start_time;
     (*myScenarioNodePtr)["status"] = statusToString(scenario.status);
+    (*myScenarioNodePtr)["start_time"] = scenario.start_time;
+    (*myScenarioNodePtr)["end_time"] = scenario.end_time;
+    (*myScenarioNodePtr)["duration"] = scenario.end_time - scenario.start_time;
 
     if (passed == scenario.status) myFeaturePassedScenarios++; 
-    else if (failed == scenario.status) myFeatureFailedScenarios++; 
+    else if (failed == scenario.status) myFeatureFailedScenarios++;
 }
 
 void JsonReporter::scenarioSkip(const CukeScenario& scenario)
 {
-    scenarioBegin(scenario);
-    (*myScenarioNodePtr)["duration"] = 0;
     myFeatureSkippedScenarios++;
 }
 
@@ -125,24 +141,27 @@ void JsonReporter::stepBegin(const CukeStep& step)
 {
     json stepNode;
     stepNode["keyword"] = step.action;
-    stepNode["text"] = step.text;
-    json& treeNode = (*myScenarioNodePtr)["scenarioSteps"].emplace_back(stepNode);
+    stepNode["name"] = step.text;
+    stepNode["status"] = statusToString(pending);
+    stepNode["start_time"] = now();
+    stepNode["end_time"] = now();
+    stepNode["duration"] = 0;
+    json& treeNode = (*myScenarioNodePtr)["steps"].emplace_back(stepNode);
     myStepNodePtr = &treeNode;
 }
 
 void JsonReporter::stepEnd(const CukeStep& step)
 {
     (*myStepNodePtr)["status"] = statusToString(step.status);
-    (*myStepNodePtr)["error"] = step.error;
-    (*myStepNodePtr)["startTime"] = step.start_time;
-    (*myStepNodePtr)["endTime"] = step.end_time;
+    (*myStepNodePtr)["start_time"] = step.start_time;
+    (*myStepNodePtr)["end_time"] = step.end_time;
     (*myStepNodePtr)["duration"] = step.end_time - step.start_time;
+    (*myStepNodePtr)["error_message"] = step.error;
 }
 
 void JsonReporter::stepSkip(const CukeStep& step)
 {
-    stepBegin(step);
-    stepEnd(step);
+
 }
 
 const json& JsonReporter::getJson() const
@@ -158,7 +177,7 @@ void JsonReporter::dumpReport()
         std::filesystem::create_directories(destDir);
     }
 
-    std::ofstream reportFile("report/cuke_report.json");
+    std::ofstream reportFile(destDir / "cuke_report.json");
 
     if (!reportFile.is_open())
     {
