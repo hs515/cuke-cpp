@@ -141,6 +141,7 @@ table td.chart {
 
 table td.chart #feature-chart,
 table td.chart #scenario-chart,
+table td.chart #step-chart,
 table td.chart .total {
 	height: 140px;
 	margin: 15px 10px 10px 0;

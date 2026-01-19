@@ -34,6 +34,12 @@ $(document).ready(function() {
     data.copyrightYear = new Date().getFullYear();
     data.copyrightOrganization = "XXX LLC.";
 
+    data.totalPassedSteps = 0;
+    data.totalFailedSteps = 0;
+    data.totalSkippedSteps = 0;
+    data.totalUndefinedSteps = 0;
+    data.totalAmbiguousSteps = 0;
+
     data.elements.forEach((scenario, scenarioIndex) => {
         scenario.passedSteps = 0;
         scenario.failedSteps = 0;
@@ -71,8 +77,21 @@ $(document).ready(function() {
         let scenarioStartTime = new Date(scenario.start_time);
         scenario.formattedDuration = formatDuration(scenario.duration);
         scenario.startTime = scenarioStartTime.toLocaleDateString() + " " + scenarioStartTime.toLocaleTimeString();
-        totalDuration += scenario.duration;
+        data.totalDuration += scenario.duration;
+        data.totalPassedSteps += scenario.passedSteps;
+        data.totalFailedSteps += scenario.failedSteps;
+        data.totalUndefinedSteps += scenario.undefinedSteps;
+        data.totalAmbiguousSteps += scenario.ambiguousSteps;
+        data.totalSkippedSteps += scenario.skippedSteps;
     });
+
+    let totalSteps = data.totalPassedSteps + data.totalFailedSteps + data.totalUndefinedSteps + data.totalAmbiguousSteps + data.totalSkippedSteps;
+    data.totalSteps = totalSteps;
+    data.passedStepsPercent = (data.totalPassedSteps * 100 / totalSteps).toFixed(2);
+    data.failedStepsPercent = (data.totalFailedSteps * 100 / totalSteps).toFixed(2);
+    data.ambiguousStepsPercent = (data.totalAmbiguousSteps * 100 / totalSteps).toFixed(2);
+    data.undefinedStepsPercent = (data.totalUndefinedSteps * 100 / totalSteps).toFixed(2);
+    data.skippedStepsPercent = (data.totalSkippedSteps * 100 / totalSteps).toFixed(2);
 
     data.formattedTotalDuration = formatDuration(totalDuration);
 
@@ -120,6 +139,45 @@ $(document).ready(function() {
             }]
         },
         options: scenarioOptions
+    });
+
+    var stepOptions = {
+        legend: false,
+        responsive: false
+    };
+
+    new Chart(document.getElementById("step-chart"), {
+        type: 'doughnut',
+        tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+        data: {
+            labels: [
+                "Passed",
+                "Failed",
+                "Pending",
+                "Skipped",
+                "Ambiguous",
+                "Not defined"
+            ],
+            datasets: [{
+                data: [
+                    data.totalPassedSteps,
+                    data.totalFailedSteps,
+                    0,
+                    data.totalSkippedSteps,
+                    data.totalAmbiguousSteps,
+                    data.totalUndefinedSteps
+                ],
+                backgroundColor: [
+                    "#26B99A",
+                    "#E74C3C",
+                    "#FFD119",
+                    "#3498DB",
+                    "#b73122",
+                    "#F39C12"
+                ]
+            }]
+        },
+        options: stepOptions
     });
 
     $('.x_title').on('click', function() {
