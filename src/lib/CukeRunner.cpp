@@ -142,11 +142,21 @@ bool CukeRunner::runStep(CukeStep& step)
     if (step.step_defs.size() == 0) // Handling undefined step definition
     {
         step.status = undefined;
-        step.error = snippetStep(step);
+        std::stringstream ss;
+        ss << "Undefined step definition. Implement a step definition like:" << "\n";
+        ss << snippetStep(step);
+        step.error = ss.str();
     }
     else if (step.step_defs.size() > 1) // Handling ambiguous step definitions
     {
         step.status = ambiguous;
+        std::stringstream ss;
+        ss << "Ambiguous step definition matches found:" << "\n";
+        for (auto&& stepInfo : step.step_defs)
+        {
+            ss << "  " << stepInfo.source << ": \"" << stepInfo.regexp << "\"\n";
+        }
+        step.error = ss.str();
     }
     else // Good
     {

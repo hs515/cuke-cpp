@@ -42,11 +42,13 @@ $(document).ready(function() {
         scenario.skippedSteps = 0;
         scenario.defaultArrow = "up";
         scenario.defaultStyle = "";
+        if (scenario.status == "passed") {
+            scenario.defaultArrow = "down";
+            scenario.defaultStyle = "display: none;";
+        }
 
         scenario.steps.forEach((step, stepIndex) => {
             if (step.status == "passed") {
-                scenario.defaultArrow = "down";
-                scenario.defaultStyle = "display: none;";
                 scenario.passedSteps++;
             } 
             else if (step.status == "failed") {

@@ -134,12 +134,7 @@ void ConsoleReporter::stepEnd(const CukeStep& step)
     {
         std::cout << Indent(4) << RED << step.action << " " << step.text << RST;
         std::cout << GRY << " # Multiple ambiguous matches" << RST << std::endl;
-        std::cout << std::endl << RED << "Ambiguous matches of \"" << step.text << "\":" << std::endl;
-        for (auto&& stepInfo : step.step_defs)
-        {
-            std::cout << Indent(2) << stepInfo.source << ": /" << stepInfo.regexp << "/" << std::endl;
-        }
-        std::cout << RST << std::endl;
+        std::cout << std::endl << RED << step.error.value() << RST << std::endl;
     }
     else if (skipped == step.status)
     {
