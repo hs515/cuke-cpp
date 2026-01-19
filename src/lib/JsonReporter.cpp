@@ -156,7 +156,7 @@ void JsonReporter::stepEnd(const CukeStep& step)
     (*myStepNodePtr)["start_time"] = step.start_time;
     (*myStepNodePtr)["end_time"] = step.end_time;
     (*myStepNodePtr)["duration"] = step.end_time - step.start_time;
-    (*myStepNodePtr)["error_message"] = step.error;
+    if (step.error.has_value()) (*myStepNodePtr)["error_message"] = step.error.value();
 }
 
 void JsonReporter::stepSkip(const CukeStep& step)
@@ -171,7 +171,7 @@ const json& JsonReporter::getJson() const
 
 void JsonReporter::dumpReport()
 {
-    const std::filesystem::path destDir("reports");
+    const std::filesystem::path destDir{"reports"};
     if (!std::filesystem::exists(destDir))
     {
         std::filesystem::create_directories(destDir);

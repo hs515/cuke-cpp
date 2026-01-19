@@ -115,7 +115,7 @@ void ConsoleReporter::stepEnd(const CukeStep& step)
         myUndefSteps++;
         std::cout << Indent(4) << YEL << step.action << " " << step.text << RST;
         std::cout << GRY << " # Step definition undefined! Implement it using the snippet below?" << RST << std::endl;
-        std::cout << std::endl << YEL << step.error << RST << std::endl;
+        std::cout << std::endl << YEL << step.error.value() << RST << std::endl;
     }
     else if (passed == step.status)
     {
@@ -128,7 +128,7 @@ void ConsoleReporter::stepEnd(const CukeStep& step)
         myFailedSteps++;
         std::cout << Indent(4) << RED << step.action << " " << step.text << RST;
         std::cout << GRY << " # " << step.step_defs.at(0).source << RST << std::endl;
-        std::cout << std::endl << RED << step.error << RST << std::endl;
+        std::cout << std::endl << RED << step.error.value() << RST << std::endl;
     }
     else if (ambiguous == step.status)
     {

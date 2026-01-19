@@ -7,8 +7,8 @@ using namespace cuke::internal;
 using namespace nlohmann;
 
 CukeRunner::CukeRunner(const ReporterOptions& options, const FilterTagOptions& filterTags) :
-    myEventListener(options),
-    myFilterTags(filterTags)
+    myEventListener{options},
+    myFilterTags{filterTags}
 {
     myEventListener.executionBegin();
 }
@@ -182,11 +182,15 @@ bool CukeRunner::invokeStep(CukeStep& step, std::string& error)
 {
     auto stepInfo = step.step_defs.at(0);
     bool success = true;
-    if ("DocString" == step.arg_type)
+    if (DocString == step.arg_type)
     {
-        success = myCukeServer.invoke(stepInfo.id, step.doc_string_arg, error);
+        success = myCukeServer.invoke(stepInfo.id, step.doc_string_arg.value(), error);
     }
-    else // if ("DataTable" == step.arg_type)
+    else if (DataTable == step.arg_type)
+    {
+        success = myCukeServer.invoke(stepInfo.id, step.data_table_arg.value_or(CucumberTableArg()), error);
+    }
+    else // if (NoArgument == step.arg_type)
     {
         std::vector<std::string> args;
         for (auto&& argPair : stepInfo.args)
@@ -200,7 +204,19 @@ bool CukeRunner::invokeStep(CukeStep& step, std::string& error)
 
 std::string CukeRunner::snippetStep(CukeStep& step)
 {
-    return myCukeServer.snippetText(step.action, step.text, step.arg_type);
+    auto multiLineArg = [&]()
+    {
+        switch (step.arg_type)
+        {
+            case DataTable:
+                return std::string{"DataTable"};
+            case DocString:
+                return std::string{"DocString"};
+            default:
+                return std::string();
+        }
+    };
+    return myCukeServer.snippetText(step.action, step.text, multiLineArg());
 }
 
 std::vector<CukeStepInfo> CukeRunner::stepMatch(const std::string& stepText)

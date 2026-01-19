@@ -83,19 +83,19 @@ namespace cuke::internal
                         }
                         tableArg.emplace_back(tableRow);
                     }
-                    step.arg_type = "DataTable";
-                    step.table_arg = tableArg;
+                    step.arg_type = DataTable;
+                    step.data_table_arg = tableArg;
                 }
                 else if (argument.doc_string.has_value())
                 {
                     const auto& msgDocString = argument.doc_string.value();
-                    step.arg_type = "DocString";
+                    step.arg_type = DocString;
                     step.doc_string_arg = msgDocString.content;
                 }
             }
             else
             {
-                step.arg_type = "";
+                step.arg_type = NoArgument;
             }
         }
 

@@ -26,14 +26,21 @@ namespace cuke::internal
 
         /// @brief Invoke step definition
         /// @param stepId 
-        /// @param arg invoke argument
+        /// @param docArg invoke doc string argument
         /// @param error set to the error message if invoke failed
         /// @return true if invoke successfully, otherwise false
-        bool invoke(const std::string& stepId, const std::string& arg, std::string& error) const;
+        bool invoke(const std::string& stepId, const std::string& docArg, std::string& error) const;
 
         /// @brief Invoke step definition
         /// @param stepId 
-        /// @param args invoke argument
+        /// @param tableArg invoke data table argument
+        /// @param error set to the error message if invoke failed
+        /// @return true if invoke successfully, otherwise false
+        bool invoke(const std::string& stepId, const std::vector<std::vector<std::string>>& tableArg, std::string& error) const;
+
+        /// @brief Invoke step definition
+        /// @param stepId 
+        /// @param args invoke regex arguments
         /// @param error set to the error message if invoke failed
         /// @return true if invoke successfully, otherwise false
         bool invoke(const std::string& stepId, const std::vector<std::string>& args, std::string& error) const;

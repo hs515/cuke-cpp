@@ -34,3 +34,23 @@ THEN("^the result should be (.*) on the screen$") {
 
     EXPECT_EQ(expected, context->result);
 }
+
+GIVEN("^I have entered numbers from a table into the calculator$") {
+    TABLE_PARAM(rows);
+    ScenarioScope<CalcCtx> context;
+
+    for (const auto& row: rows.hashes()) {
+        context->calc.push(std::stod(row.at("number")));
+    }
+}
+
+GIVEN("^I have entered numbers from a multi-line text into the calculator$") {
+    REGEX_PARAM(std::string, text);
+    ScenarioScope<CalcCtx> context;
+
+    std::stringstream ss(text);
+    std::string num;
+    while (ss >> num) {
+        context->calc.push(std::stod(num));
+    }
+}

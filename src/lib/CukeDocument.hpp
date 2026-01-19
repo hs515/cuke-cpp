@@ -2,6 +2,7 @@
 #define CUKE_LIB_CLIENT_CUKEDOCUMENT_HPP
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -19,6 +20,14 @@ namespace cuke::internal
         undefined,
         ambiguous,
         skipped
+    };
+
+    /// @brief Argument type of Cucumber steps
+    enum CucumberArgumentType
+    {
+        DataTable,
+        DocString,
+        NoArgument
     };
 
     struct CukeStepInfo 
@@ -42,10 +51,10 @@ namespace cuke::internal
     {
         std::string action;
         std::string text;
-        std::string error;
-        std::string arg_type;
-        CucumberTableArg table_arg;
-        std::string doc_string_arg;
+        std::optional<std::string> error;
+        CucumberArgumentType arg_type = NoArgument;
+        std::optional<CucumberTableArg> data_table_arg;
+        std::optional<std::string> doc_string_arg;
         std::vector<CukeStepInfo> step_defs;
     };
 

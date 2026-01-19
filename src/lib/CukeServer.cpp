@@ -85,12 +85,35 @@ namespace cuke::internal
         handle(request.dump());
     }
 
-    bool CukeServer::invoke(const std::string& stepId, const std::string& arg, std::string& error) const
+    bool CukeServer::invoke(const std::string& stepId, const std::string& docArg, std::string& error) const
     {
         json request = json::array();
         json payload;
         payload["id"] = stepId;
-        payload["args"] = arg;
+        payload["args"] = docArg;
+        request.emplace_back("invoke");
+        request.emplace_back(payload);
+
+        json response = json::parse(handle(request.dump()));
+
+        bool success = response[0].get<std::string>() == "success";
+        error = (success) ? "" : response[1]["message"].get<std::string>();
+        return success;
+    }
+
+    bool CukeServer::invoke(const std::string& stepId, const std::vector<std::vector<std::string>>& tableArg, std::string& error) const
+    {
+        json jsonArgs = json::array();
+        json jsonTable = json::array();
+        for (auto&& row: tableArg) {
+            jsonTable.emplace_back(row);
+        }
+        jsonArgs.emplace_back(jsonTable);
+
+        json request = json::array();
+        json payload;
+        payload["id"] = stepId;
+        payload["args"] = jsonArgs;
         request.emplace_back("invoke");
         request.emplace_back(payload);
 

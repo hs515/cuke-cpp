@@ -11,8 +11,8 @@ static void render(const std::filesystem::path& tmpl, const std::filesystem::pat
 
 void HtmlReporter::dumpReport()
 {
-    const std::filesystem::path srcDir("templates");
-    const std::filesystem::path destDir("reports");
+    const std::filesystem::path srcDir{"templates"};
+    const std::filesystem::path destDir{"reports"};
 
     if (!std::filesystem::exists(destDir))
     {
