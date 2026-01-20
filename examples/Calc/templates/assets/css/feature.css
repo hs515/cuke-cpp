@@ -222,7 +222,6 @@ table td.chart .total {
 	border: 1px solid #E6E9ED;
 	-webkit-column-break-inside: avoid;
 	-moz-column-break-inside: avoid;
-	column-break-inside: avoid;
 	opacity: 1;
 	transition: all .2s ease;
 }
@@ -282,10 +281,6 @@ table td.chart .total {
 }
 
 .panel_toolbox>li>a {
-	cursor: pointer;
-}
-
-.panel_toolbox>li>a {
 	padding: 5px;
 	color: #C5C7CB;
 	font-size: 14px;
@@ -298,10 +293,6 @@ table td.chart .total {
 .page-title {
 	width: 100%;
 	padding: 10px 0 30px 0;
-}
-
-.page-title {
-	display: block;
 }
 
 .page-title h1 {
@@ -367,12 +358,6 @@ table.quick-list td.meta-data-title {
 ul.quick-list li span,
 table.quick-list td {
 	line-height: 28px;
-}
-
-ul.quick-list li,
-table.quick-list tr {
-	border-bottom: 1px solid #efefef;
-	padding: 0.5em 0;
 }
 
 ul.quick-list li:last-child,

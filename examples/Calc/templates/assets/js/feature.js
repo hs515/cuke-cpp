@@ -1,5 +1,5 @@
-var hideResult;
-var showAll;
+let hideResult;
+let showAll;
 
 function formatDuration(duration)
 {
@@ -102,12 +102,12 @@ $(document).ready(function() {
         $(this).replaceWith(html);
     });
 
-    var scenarioOptions = {
+    let scenarioOptions = {
         legend: false,
         responsive: false
     };
 
-    new Chart(document.getElementById("scenario-chart"), {
+    let scenarioChart = new Chart(document.getElementById("scenario-chart"), {
         type: 'doughnut',
         tooltipFillColor: "rgba(51, 51, 51, 0.55)",
         data: {
@@ -141,12 +141,12 @@ $(document).ready(function() {
         options: scenarioOptions
     });
 
-    var stepOptions = {
+    let stepOptions = {
         legend: false,
         responsive: false
     };
 
-    new Chart(document.getElementById("step-chart"), {
+    let stepChart = new Chart(document.getElementById("step-chart"), {
         type: 'doughnut',
         tooltipFillColor: "rgba(51, 51, 51, 0.55)",
         data: {
@@ -181,7 +181,7 @@ $(document).ready(function() {
     });
 
     $('.x_title').on('click', function() {
-        var $BOX_PANEL = $(this).closest('.x_panel'),
+        let $BOX_PANEL = $(this).closest('.x_panel'),
             $ICON = $(this).find('.collapse-link i'),
             $BOX_CONTENT = $BOX_PANEL.find('.x_content');
 
@@ -213,13 +213,10 @@ $(document).ready(function() {
 
     const status = ['passed', 'failed', 'pending', 'skipped', 'ambiguous', 'not-defined']
     status.forEach(value => {
-        var menuItem = $('span[class*=' + value + '-background]');
+        let menuItem = $('span[class*=' + value + '-background]');
         if (menuItem.length === 0) {
             $('#' + value).parent().addClass('disabled');
         }
     });
 
-    
-
 });
-	
