@@ -31,7 +31,7 @@ namespace cuke::internal
          * @param featureFile The feature file path
          * @return true if all scenarios passed, false otherwise
          */
-        bool run(const std::string& featureFile);
+        bool run(std::string_view featureFile);
 
     private:
         void beginFeature(CukeFeature& feature);
@@ -48,7 +48,7 @@ namespace cuke::internal
         void endStep(CukeStep& step);
         bool invokeStep(CukeStep& step, std::string& error);
         std::string snippetStep(const CukeStep& step);
-        std::vector<CukeStepInfo> stepMatch(const std::string& stepText);
+        std::vector<CukeStepInfo> stepMatch(std::string_view stepText);
 
         CukeServer myCukeServer = CukeServer();
         EventListener myEventListener;

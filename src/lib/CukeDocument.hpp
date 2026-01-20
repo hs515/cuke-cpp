@@ -82,7 +82,7 @@ namespace cuke::internal
     struct CukeDocument
     {
         CukeFeature feature;
-        void parseFeatureFile(const std::string& filename);
+        void parseFeatureFile(std::string_view filename);
     };
 } // namespace cuke::internal
 

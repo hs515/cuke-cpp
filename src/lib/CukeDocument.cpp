@@ -100,7 +100,7 @@ namespace cuke::internal
         }
     } // namespace
 
-    void CukeDocument::parseFeatureFile(const std::string& filename)
+    void CukeDocument::parseFeatureFile(std::string_view filename)
     {
         cucumber::gherkin::app app;
         cucumber::gherkin::app::callbacks cbs{
@@ -120,7 +120,7 @@ namespace cuke::internal
         app.include_source(true);
         app.include_ast(true);
         app.include_pickles(true);
-        app.parse(cucumber::gherkin::file{filename}, cbs);
+        app.parse(cucumber::gherkin::file{std::string{filename}}, cbs);
     }
 
 } // namespace cuke::internal

@@ -14,7 +14,7 @@ namespace cuke::internal
         /// @brief Find step definitions by step text
         /// @param stepText 
         /// @return a json string that contains a vector of matched step definitions info
-        std::string stepMatch(const std::string& stepText) const;
+        std::string stepMatch(std::string_view stepText) const;
 
         /// @brief Fire begin-scenario hooks
         /// @param tags a vector of tags associated with a scenario
@@ -29,34 +29,34 @@ namespace cuke::internal
         /// @param docArg invoke doc string argument
         /// @param error set to the error message if invoke failed
         /// @return true if invoke successfully, otherwise false
-        bool invoke(const std::string& stepId, const std::string& docArg, std::string& error) const;
+        bool invoke(std::string_view stepId, std::string_view docArg, std::string& error) const;
 
         /// @brief Invoke step definition
         /// @param stepId 
         /// @param tableArg invoke data table argument
         /// @param error set to the error message if invoke failed
         /// @return true if invoke successfully, otherwise false
-        bool invoke(const std::string& stepId, const std::vector<std::vector<std::string>>& tableArg, std::string& error) const;
+        bool invoke(std::string_view stepId, const std::vector<std::vector<std::string>>& tableArg, std::string& error) const;
 
         /// @brief Invoke step definition
         /// @param stepId 
         /// @param args invoke regex arguments
         /// @param error set to the error message if invoke failed
         /// @return true if invoke successfully, otherwise false
-        bool invoke(const std::string& stepId, const std::vector<std::string>& args, std::string& error) const;
+        bool invoke(std::string_view stepId, const std::vector<std::string>& args, std::string& error) const;
 
         /// @brief Fetch snippet text
         /// @param stepAction can be Given, When or Then
         /// @param stepText 
         /// @param multilineArgClass 
         /// @return snippet text
-        std::string snippetText(const std::string& stepAction, const std::string& stepText, const std::string& multilineArgClass) const;
+        std::string snippetText(std::string_view stepAction, std::string_view stepText, std::string_view multilineArgClass) const;
 
     private:
         /// @brief Handle a request string and return the response string
         /// @param request request string
         /// @return response string
-        std::string handle(const std::string& request) const;
+        std::string handle(std::string_view request) const;
     };
 } // namespace cuke::internal
 

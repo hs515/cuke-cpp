@@ -18,7 +18,7 @@ CukeRunner::~CukeRunner()
     myEventListener.executionEnd();
 }
 
-bool CukeRunner::run(const std::string& featureFile)
+bool CukeRunner::run(std::string_view featureFile)
 {
     CukeDocument cukeDocument;
     cukeDocument.parseFeatureFile(featureFile);
@@ -229,7 +229,7 @@ std::string CukeRunner::snippetStep(const CukeStep& step)
     return myCukeServer.snippetText(step.action, step.text, multiLineArg());
 }
 
-std::vector<CukeStepInfo> CukeRunner::stepMatch(const std::string& stepText)
+std::vector<CukeStepInfo> CukeRunner::stepMatch(std::string_view stepText)
 {
     json response = json::parse(myCukeServer.stepMatch(stepText));
 

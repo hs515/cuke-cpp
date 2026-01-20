@@ -20,11 +20,11 @@ namespace cuke::internal
         }
     }
 
-    std::string CukeServer::handle(const std::string& request) const
+    std::string CukeServer::handle(std::string_view request) const
     {
         try
         {
-            return getWireProtocolHandler().handle(request);
+            return getWireProtocolHandler().handle(std::string{request});
         }
         catch(const std::exception& e)
         {
@@ -37,11 +37,11 @@ namespace cuke::internal
         }
     }
 
-    std::string CukeServer::stepMatch(const std::string& stepText) const
+    std::string CukeServer::stepMatch(std::string_view stepText) const
     {
         json request = json::array();
         json payload;
-        payload["name_to_match"] = stepText;
+        payload["name_to_match"] = std::string{stepText};
         request.emplace_back("step_matches");
         request.emplace_back(payload);
 
@@ -84,12 +84,12 @@ namespace cuke::internal
         handle(request.dump());
     }
 
-    bool CukeServer::invoke(const std::string& stepId, const std::string& docArg, std::string& error) const
+    bool CukeServer::invoke(std::string_view stepId, std::string_view docArg, std::string& error) const
     {
         json request = json::array();
         json payload;
-        payload["id"] = stepId;
-        payload["args"] = docArg;
+        payload["id"] = std::string{stepId};
+        payload["args"] = std::string{docArg};
         request.emplace_back("invoke");
         request.emplace_back(payload);
 
@@ -100,7 +100,7 @@ namespace cuke::internal
         return success;
     }
 
-    bool CukeServer::invoke(const std::string& stepId, const std::vector<std::vector<std::string>>& tableArg, std::string& error) const
+    bool CukeServer::invoke(std::string_view stepId, const std::vector<std::vector<std::string>>& tableArg, std::string& error) const
     {
         json jsonArgs = json::array();
         json jsonTable = json::array();
@@ -123,7 +123,7 @@ namespace cuke::internal
         return success;
     }
 
-    bool CukeServer::invoke(const std::string& stepId, const std::vector<std::string>& args, std::string& error) const
+    bool CukeServer::invoke(std::string_view stepId, const std::vector<std::string>& args, std::string& error) const
     {
         json jsonArgs = json::array();
         for (auto&& arg: args) {
@@ -144,13 +144,13 @@ namespace cuke::internal
         return success;
     }
 
-    std::string CukeServer::snippetText(const std::string& stepAction, const std::string& stepText, const std::string& multilineArgClass) const
+    std::string CukeServer::snippetText(std::string_view stepAction, std::string_view stepText, std::string_view multilineArgClass) const
     {
         json request = json::array();
         json payload;
-        payload["step_keyword"] = stepAction;
-        payload["step_name"] = stepText;
-        payload["multiline_arg_class"] = multilineArgClass;
+        payload["step_keyword"] = std::string{stepAction};
+        payload["step_name"] = std::string{stepText};
+        payload["multiline_arg_class"] = std::string{multilineArgClass};
         request.emplace_back("snippet_text");
         request.emplace_back(payload);
 
