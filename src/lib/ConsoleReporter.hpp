@@ -8,8 +8,6 @@
 
 namespace cuke::internal
 {
-    using namespace cuke::internal;
-
     class CukeFeature;
     class CukeScenario;
     class CukeStep;
@@ -17,13 +15,12 @@ namespace cuke::internal
     class Indent
     {
     public:
-        Indent(int value) : myValue(value) {}
+        explicit Indent(int value) : myValue(value) {}
     private:
         int myValue;
-        friend std::ostream& operator<<(std::ostream& os, const Indent& indent);
+        std::ostream& operator<<(std::ostream& os) const;
+        friend std::ostream& operator<<(std::ostream& os, const Indent& indent) { return indent.operator<<(os); }
     };
-
-    std::ostream& operator<<(std::ostream& os, const Indent& indent);
 
     class ConsoleReporter : public EventListenerIF
     {

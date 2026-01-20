@@ -43,10 +43,9 @@ namespace cuke::internal
 
     bool FilterTagOptions::evaluate(const std::vector<std::string>& tags) const
     {
-        std::unordered_set<std::string> tagSet(tags.begin(), tags.end());
         for (const auto& expr : myFilterExpressions)
         {
-            if (!expr->evaluate(tagSet))
+            if (!expr->evaluate(tags))
             {
                 return false;
             }

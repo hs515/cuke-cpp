@@ -47,10 +47,10 @@ namespace cuke::internal
         void skipStep(CukeStep& step);
         void endStep(CukeStep& step);
         bool invokeStep(CukeStep& step, std::string& error);
-        std::string snippetStep(CukeStep& step);
+        std::string snippetStep(const CukeStep& step);
         std::vector<CukeStepInfo> stepMatch(const std::string& stepText);
 
-        CukeServer myCukeServer;
+        CukeServer myCukeServer = CukeServer();
         EventListener myEventListener;
         const FilterTagOptions& myFilterTags;
     };

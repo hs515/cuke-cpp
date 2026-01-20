@@ -46,7 +46,7 @@ bool CukeRunner::runFeature(CukeFeature& feature)
         {
             runningOk = runScenario(scenario) && runningOk;
         }
-        feature.status = (runningOk ? passed : failed);
+        feature.status = (runningOk ? CucumberExecutionStatus::passed : CucumberExecutionStatus::failed);
     }
 
     endFeature(feature);
@@ -55,7 +55,7 @@ bool CukeRunner::runFeature(CukeFeature& feature)
 
 void CukeRunner::skipFeature(CukeFeature& feature)
 {
-    feature.status = skipped;
+    feature.status = CucumberExecutionStatus::skipped;
     for (auto&& scenario : feature.scenarios)
     {
         beginScenario(scenario);
@@ -102,7 +102,7 @@ bool CukeRunner::runScenario(CukeScenario& scenario)
                 endStep(step);
             }
         }
-        scenario.status = (runningOk ? passed : failed);
+        scenario.status = (runningOk ? CucumberExecutionStatus::passed : CucumberExecutionStatus::failed);
     }
 
     endScenario(scenario);
@@ -111,7 +111,7 @@ bool CukeRunner::runScenario(CukeScenario& scenario)
 
 void CukeRunner::skipScenario(CukeScenario& scenario)
 {
-    scenario.status = skipped;
+    scenario.status = CucumberExecutionStatus::skipped;
     for (auto&& step : scenario.steps)
     {
         beginStep(step);
@@ -139,9 +139,9 @@ bool CukeRunner::runStep(CukeStep& step)
     beginStep(step);
 
     step.step_defs = stepMatch(step.text); // Update step definitions
-    if (step.step_defs.size() == 0) // Handling undefined step definition
+    if (step.step_defs.empty()) // Handling undefined step definition
     {
-        step.status = undefined;
+        step.status = CucumberExecutionStatus::undefined;
         std::stringstream ss;
         ss << "Undefined step definition. Implement a step definition like:" << "\n";
         ss << snippetStep(step);
@@ -149,7 +149,7 @@ bool CukeRunner::runStep(CukeStep& step)
     }
     else if (step.step_defs.size() > 1) // Handling ambiguous step definitions
     {
-        step.status = ambiguous;
+        step.status = CucumberExecutionStatus::ambiguous;
         std::stringstream ss;
         ss << "Ambiguous step definition matches found:" << "\n";
         for (auto&& stepInfo : step.step_defs)
@@ -163,22 +163,22 @@ bool CukeRunner::runStep(CukeStep& step)
         std::string error;
         if (invokeStep(step, error))
         {
-            step.status = passed;
+            step.status = CucumberExecutionStatus::passed;
         }
         else
         {
-            step.status = failed;
+            step.status = CucumberExecutionStatus::failed;
             step.error = error;
         }
     }
 
     endStep(step);
-    return step.status == passed;
+    return step.status == CucumberExecutionStatus::passed;
 }
 
 void CukeRunner::skipStep(CukeStep& step)
 {
-    step.status = skipped;
+    step.status = CucumberExecutionStatus::skipped;
     myEventListener.stepSkip(step);
 }
 
@@ -192,35 +192,35 @@ bool CukeRunner::invokeStep(CukeStep& step, std::string& error)
 {
     auto stepInfo = step.step_defs.at(0);
     bool success = true;
-    if (DocString == step.arg_type)
+    if (CucumberArgumentType::DocString == step.arg_type)
     {
         success = myCukeServer.invoke(stepInfo.id, step.doc_string_arg.value(), error);
     }
-    else if (DataTable == step.arg_type)
+    else if (CucumberArgumentType::DataTable == step.arg_type)
     {
         success = myCukeServer.invoke(stepInfo.id, step.data_table_arg.value_or(CucumberTableArg()), error);
     }
     else // if (NoArgument == step.arg_type)
     {
         std::vector<std::string> args;
-        for (auto&& argPair : stepInfo.args)
+        for (const auto& [key, value] : stepInfo.args)
         {
-            args.emplace_back(argPair.second);
+            args.emplace_back(value);
         }
         success = myCukeServer.invoke(stepInfo.id, args, error);
     }
     return success;
 }
 
-std::string CukeRunner::snippetStep(CukeStep& step)
+std::string CukeRunner::snippetStep(const CukeStep& step)
 {
     auto multiLineArg = [&]()
     {
         switch (step.arg_type)
         {
-            case DataTable:
+            case CucumberArgumentType::DataTable:
                 return std::string{"DataTable"};
-            case DocString:
+            case CucumberArgumentType::DocString:
                 return std::string{"DocString"};
             default:
                 return std::string();
@@ -242,8 +242,7 @@ std::vector<CukeStepInfo> CukeRunner::stepMatch(const std::string& stepText)
         stepInfo.source = stepJson["source"].get<std::string>();
         for(auto arg : stepJson["args"])
         {
-            StepMatchArg pair(arg["pos"].get<unsigned int>(), arg["val"].get<std::string>());
-            stepInfo.args.emplace_back(pair);
+            stepInfo.args.emplace_back(arg["pos"].get<unsigned int>(), arg["val"].get<std::string>());
         }
         steps.emplace_back(stepInfo);
     }

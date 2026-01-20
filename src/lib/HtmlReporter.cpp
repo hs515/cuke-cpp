@@ -87,11 +87,11 @@ static void render(const std::filesystem::path& tmpl, const std::filesystem::pat
         {
             out << "<script>const data = "
                 << data.dump()
-                << "</script>" << std::endl;
+                << "</script>\n";
         }
         else
         {
-            out << line << std::endl;
+            out << line << "\n";
         }
     }
     in.close();

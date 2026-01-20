@@ -25,7 +25,7 @@ EventListener::EventListener(const ReporterOptions& options)
 
 void EventListener::executionBegin()
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->executionBegin();
     }
@@ -33,7 +33,7 @@ void EventListener::executionBegin()
 
 void EventListener::executionEnd()
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->executionEnd();
     }
@@ -41,7 +41,7 @@ void EventListener::executionEnd()
 
 void EventListener::featureBegin(const CukeFeature& feature)
 {    
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->featureBegin(feature);
     }
@@ -49,7 +49,7 @@ void EventListener::featureBegin(const CukeFeature& feature)
 
 void EventListener::featureEnd(const CukeFeature& feature)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->featureEnd(feature);
     }
@@ -57,7 +57,7 @@ void EventListener::featureEnd(const CukeFeature& feature)
 
 void EventListener::featureSkip(const CukeFeature& feature)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->featureSkip(feature);
     }
@@ -65,7 +65,7 @@ void EventListener::featureSkip(const CukeFeature& feature)
 
 void EventListener::scenarioBegin(const CukeScenario& scenario)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->scenarioBegin(scenario);
     }
@@ -73,7 +73,7 @@ void EventListener::scenarioBegin(const CukeScenario& scenario)
 
 void EventListener::scenarioEnd(const CukeScenario& scenario)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->scenarioEnd(scenario);
     }
@@ -81,7 +81,7 @@ void EventListener::scenarioEnd(const CukeScenario& scenario)
 
 void EventListener::scenarioSkip(const CukeScenario& scenario)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->scenarioSkip(scenario);
     }
@@ -89,7 +89,7 @@ void EventListener::scenarioSkip(const CukeScenario& scenario)
 
 void EventListener::stepBegin(const CukeStep& step)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->stepBegin(step);
     }
@@ -97,7 +97,7 @@ void EventListener::stepBegin(const CukeStep& step)
 
 void EventListener::stepEnd(const CukeStep& step)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->stepEnd(step);
     }
@@ -105,7 +105,7 @@ void EventListener::stepEnd(const CukeStep& step)
 
 void EventListener::stepSkip(const CukeStep& step)
 {
-    for (auto&& listener : myListeners)
+    for (const auto& listener : myListeners)
     {
         listener->stepSkip(step);
     }

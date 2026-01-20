@@ -83,29 +83,28 @@ namespace cuke::internal
                         }
                         tableArg.emplace_back(tableRow);
                     }
-                    step.arg_type = DataTable;
+                    step.arg_type = CucumberArgumentType::DataTable;
                     step.data_table_arg = tableArg;
                 }
                 else if (argument.doc_string.has_value())
                 {
                     const auto& msgDocString = argument.doc_string.value();
-                    step.arg_type = DocString;
+                    step.arg_type = CucumberArgumentType::DocString;
                     step.doc_string_arg = msgDocString.content;
                 }
             }
             else
             {
-                step.arg_type = NoArgument;
+                step.arg_type = CucumberArgumentType::NoArgument;
             }
         }
-
     } // namespace
 
     void CukeDocument::parseFeatureFile(const std::string& filename)
     {
         cucumber::gherkin::app app;
         cucumber::gherkin::app::callbacks cbs{
-            .source = [&](const auto& m) {},
+            .source = [&]([[maybe_unused]]const auto& m) { /* Do nothing */ },
             .ast = [&](const auto& m) {
                 feature.filename = filename;
                 buildFeature(feature, m);
@@ -115,7 +114,7 @@ namespace cuke::internal
                 buildScenario(scenario, m);
                 feature.scenarios.emplace_back(scenario);
             },
-            .error = [&](const auto& m) {}
+            .error = [&]([[maybe_unused]]const auto& m) { /* Do nothing */ }
         };
 
         app.include_source(true);

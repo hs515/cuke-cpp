@@ -54,3 +54,14 @@ GIVEN("^I have entered numbers from a multi-line text into the calculator$") {
         context->calc.push(std::stod(num));
     }
 }
+
+GIVEN("^I have entered numbers from (.*) into the calculator$") {
+    REGEX_PARAM(std::string, text);
+    ScenarioScope<CalcCtx> context;
+
+    std::stringstream ss(text);
+    std::string num;
+    while (ss >> num) {
+        context->calc.push(std::stod(num));
+    }
+}

@@ -13,12 +13,12 @@ static std::string statusToString(CucumberExecutionStatus status)
 {
     switch (status)
     {
-        case pending: return "pending";
-        case passed: return "passed";
-        case failed: return "failed";
-        case undefined: return "undefined";
-        case ambiguous: return "ambiguous";
-        case skipped: return "skipped";
+        case CucumberExecutionStatus::pending: return "pending";
+        case CucumberExecutionStatus::passed: return "passed";
+        case CucumberExecutionStatus::failed: return "failed";
+        case CucumberExecutionStatus::undefined: return "undefined";
+        case CucumberExecutionStatus::ambiguous: return "ambiguous";
+        case CucumberExecutionStatus::skipped: return "skipped";
         default: return "Unknown";
     }
 }
@@ -61,7 +61,7 @@ void JsonReporter::featureBegin(const CukeFeature& feature)
     featureNode["name"] = feature.name;
     featureNode["description"] = feature.description;
     featureNode["tags"] = tagsNode;
-    featureNode["status"] = statusToString(pending);
+    featureNode["status"] = statusToString(CucumberExecutionStatus::pending);
     featureNode["start_time"] = now();
     featureNode["end_time"] = now();
     featureNode["duration"] = 0;
@@ -87,8 +87,8 @@ void JsonReporter::featureEnd(const CukeFeature& feature)
     (*myFeatureNodePtr)["failed"] = myFeatureFailedScenarios;
     (*myFeatureNodePtr)["skipped"] = myFeatureSkippedScenarios;
 
-    if (passed == feature.status) myPassedFeatures++; 
-    else if (failed == feature.status) myFailedFeatures++; 
+    if (CucumberExecutionStatus::passed == feature.status) myPassedFeatures++; 
+    else if (CucumberExecutionStatus::failed == feature.status) myFailedFeatures++; 
 }
 
 void JsonReporter::featureSkip(const CukeFeature& feature)
@@ -111,7 +111,7 @@ void JsonReporter::scenarioBegin(const CukeScenario& scenario)
     scenarioNode["name"] = scenario.name;
     scenarioNode["description"] = "";
     scenarioNode["tags"] = tagsNode;
-    scenarioNode["status"] = statusToString(pending);
+    scenarioNode["status"] = statusToString(CucumberExecutionStatus::pending);
     scenarioNode["start_time"] = now();
     scenarioNode["end_time"] = now();
     scenarioNode["duration"] = 0;
@@ -128,8 +128,8 @@ void JsonReporter::scenarioEnd(const CukeScenario& scenario)
     (*myScenarioNodePtr)["end_time"] = scenario.end_time;
     (*myScenarioNodePtr)["duration"] = scenario.end_time - scenario.start_time;
 
-    if (passed == scenario.status) myFeaturePassedScenarios++; 
-    else if (failed == scenario.status) myFeatureFailedScenarios++;
+    if (CucumberExecutionStatus::passed == scenario.status) myFeaturePassedScenarios++; 
+    else if (CucumberExecutionStatus::failed == scenario.status) myFeatureFailedScenarios++;
 }
 
 void JsonReporter::scenarioSkip(const CukeScenario& scenario)
@@ -142,7 +142,7 @@ void JsonReporter::stepBegin(const CukeStep& step)
     json stepNode;
     stepNode["keyword"] = step.action;
     stepNode["name"] = step.text;
-    stepNode["status"] = statusToString(pending);
+    stepNode["status"] = statusToString(CucumberExecutionStatus::pending);
     stepNode["start_time"] = now();
     stepNode["end_time"] = now();
     stepNode["duration"] = 0;
@@ -161,7 +161,7 @@ void JsonReporter::stepEnd(const CukeStep& step)
 
 void JsonReporter::stepSkip(const CukeStep& step)
 {
-
+    // Do nothing
 }
 
 const json& JsonReporter::getJson() const

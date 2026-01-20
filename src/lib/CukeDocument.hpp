@@ -12,7 +12,7 @@ namespace cuke::internal
     using StepMatchArg = std::pair<int, std::string>;
 
     /// @brief Execution status of Cucumber runnables
-    enum CucumberExecutionStatus
+    enum class CucumberExecutionStatus
     {
         pending, 
         passed, 
@@ -23,7 +23,7 @@ namespace cuke::internal
     };
 
     /// @brief Argument type of Cucumber steps
-    enum CucumberArgumentType
+    enum class CucumberArgumentType
     {
         DataTable,
         DocString,
@@ -41,7 +41,7 @@ namespace cuke::internal
     /// @brief Features, Scenarios and Steps are CucumberRunnables
     struct CucumberRunnable
     {
-        CucumberExecutionStatus status = pending;
+        CucumberExecutionStatus status = CucumberExecutionStatus::pending;
         uint64_t start_time = 0;
         uint64_t end_time = 0;
     };
@@ -52,7 +52,7 @@ namespace cuke::internal
         std::string action;
         std::string text;
         std::optional<std::string> error;
-        CucumberArgumentType arg_type = NoArgument;
+        CucumberArgumentType arg_type = CucumberArgumentType::NoArgument;
         std::optional<CucumberTableArg> data_table_arg;
         std::optional<std::string> doc_string_arg;
         std::vector<CukeStepInfo> step_defs;

@@ -11,7 +11,7 @@ namespace cuke::internal
 {
     namespace
     {
-        const WireProtocolHandler getWireProtocolHandler()
+        WireProtocolHandler getWireProtocolHandler()
         {
             static CukeEngineImpl engine_;
             static JsonWireMessageCodec codec_;
@@ -45,8 +45,7 @@ namespace cuke::internal
         request.emplace_back("step_matches");
         request.emplace_back(payload);
 
-        json response = json::parse(handle(request.dump()));
-        if ("success" == response.at(0).get<std::string>())
+        if (json response = json::parse(handle(request.dump())); "success" == response.at(0).get<std::string>())
         {
             return response.at(1).dump();
         }
@@ -97,7 +96,7 @@ namespace cuke::internal
         json response = json::parse(handle(request.dump()));
 
         bool success = response[0].get<std::string>() == "success";
-        error = (success) ? "" : response[1]["message"].get<std::string>();
+        error = success ? "" : response[1]["message"].get<std::string>();
         return success;
     }
 
@@ -120,7 +119,7 @@ namespace cuke::internal
         json response = json::parse(handle(request.dump()));
 
         bool success = response[0].get<std::string>() == "success";
-        error = (success) ? "" : response[1]["message"].get<std::string>();
+        error = success ? "" : response[1]["message"].get<std::string>();
         return success;
     }
 
@@ -141,7 +140,7 @@ namespace cuke::internal
         json response = json::parse(handle(request.dump()));
 
         bool success = response[0].get<std::string>() == "success";
-        error = (success) ? "" : response[1]["message"].get<std::string>();
+        error = success ? "" : response[1]["message"].get<std::string>();
         return success;
     }
 
@@ -158,7 +157,7 @@ namespace cuke::internal
         json response = json::parse(handle(request.dump()));
 
         bool success = response[0].get<std::string>() == "success";
-        return (success) ? response[1].get<std::string>() : "";
+        return success ? response[1].get<std::string>() : "";
     }
 
 } // namespace cuke::internal
