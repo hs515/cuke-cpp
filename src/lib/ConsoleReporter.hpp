@@ -18,8 +18,8 @@ namespace cuke::internal
         explicit Indent(int value) : myValue(value) {}
     private:
         int myValue;
-        std::ostream& operator<<(std::ostream& os) const;
-        friend std::ostream& operator<<(std::ostream& os, const Indent& indent) { return indent.operator<<(os); }
+        std::ostream& output(std::ostream& os) const;
+        friend std::ostream& operator<<(std::ostream& os, const Indent& indent) { return indent.output(os); }
     };
 
     class ConsoleReporter : public EventListenerIF

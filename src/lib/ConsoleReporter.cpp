@@ -150,7 +150,7 @@ void ConsoleReporter::stepSkip(const CukeStep& step)
 {
     // Do nothing
 }
-std::ostream& Indent::operator<<(std::ostream& os) const
+std::ostream& Indent::output(std::ostream& os) const
 {
     for (int i = 0; i < myValue; i++)
     {

@@ -36,6 +36,27 @@ static void parse_helper_options(int ac, char** av)
 static std::vector<std::string> parse_feature_files(int ac, char** av)
 {
     std::vector<std::string> featureFiles;
+    auto parse_one_feature_file = [&](const fs::path& featurePath) {
+        if (!fs::exists(featurePath))
+        {
+            std::cerr << featurePath << " does not exist." << std::endl;
+        }
+        else if (fs::is_regular_file(featurePath))
+        {
+            featureFiles.emplace_back(featurePath.string());
+        }
+        else if (fs::is_directory(featurePath))
+        {
+            for(auto& entry : fs::recursive_directory_iterator(featurePath))
+            {
+                if (fs::is_regular_file(entry) && (entry.path().extension() == ".feature"))
+                {
+                    featureFiles.emplace_back(entry.path().string());
+                }
+            }
+        }
+    };
+
     bool foundFeatureOption = false;
     for (int i = 1; i < ac; ++i) {
         std::string_view arg(av[i]);
@@ -51,25 +72,7 @@ static std::vector<std::string> parse_feature_files(int ac, char** av)
         }
         else if (foundFeatureOption)
         {
-            fs::path featurePath(arg);
-            if (!fs::exists(featurePath))
-            {
-                std::cerr << featurePath << " does not exist." << std::endl;
-            }
-            else if (fs::is_regular_file(featurePath))
-            {
-                featureFiles.emplace_back(featurePath.string());
-            }
-            else if (fs::is_directory(featurePath))
-            {
-                for(auto& entry : fs::recursive_directory_iterator(featurePath))
-                {
-                    if (fs::is_regular_file(entry) && (entry.path().extension() == ".feature"))
-                    {
-                        featureFiles.emplace_back(entry.path().string());
-                    }
-                }
-            }
+            parse_one_feature_file(fs::path(arg));
         }
     }
     return featureFiles;

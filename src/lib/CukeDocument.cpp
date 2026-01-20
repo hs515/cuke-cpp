@@ -104,17 +104,17 @@ namespace cuke::internal
     {
         cucumber::gherkin::app app;
         cucumber::gherkin::app::callbacks cbs{
-            .source = [&]([[maybe_unused]]const auto& m) { /* Do nothing */ },
-            .ast = [&](const auto& m) {
+            .source = [this]([[maybe_unused]]const auto& m) { /* Do nothing */ },
+            .ast = [this, &filename](const auto& m) {
                 feature.filename = filename;
                 buildFeature(feature, m);
             },
-            .pickle = [&](const auto& m) {
+            .pickle = [this](const auto& m) {
                 CukeScenario scenario;
                 buildScenario(scenario, m);
                 feature.scenarios.emplace_back(scenario);
             },
-            .error = [&]([[maybe_unused]]const auto& m) { /* Do nothing */ }
+            .error = [this]([[maybe_unused]]const auto& m) { /* Do nothing */ }
         };
 
         app.include_source(true);
