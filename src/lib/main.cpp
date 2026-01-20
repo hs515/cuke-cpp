@@ -28,7 +28,7 @@ static void parse_helper_options(int ac, char** av)
         if (arg == "--help")
         {
             print_help();
-            exit(0);
+            std::exit(0);
         }
     }
 }
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
     {
         std::cout << "No features to run!!" << std::endl;
         print_help();
-        exit(0);
+        std::exit(0);
     }
 
     // Collect filter tags
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     catch (std::exception& e)
     {
         std::cerr << "Error parsing tag expressions: " << e.what() << std::endl;
-        exit(1);
+        std::exit(1);
     }
 
     // Collect listener options
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
     catch(std::exception& e)
     {
         std::cerr << "Error running BDD tests: " << e.what() << std::endl;
-        exit(1);
+        std::exit(1);
     }
 
     return 0;

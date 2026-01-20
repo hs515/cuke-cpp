@@ -8,8 +8,6 @@
 
 namespace cuke::internal
 {
-    using namespace nlohmann;
-
     /**
      * @brief CucumberCpp runner handler over Wire Protocol
      */
@@ -86,7 +84,7 @@ namespace cuke::internal
          * @param error set to the error message if invoke failed
          * @return true if invoke successfully, otherwise false
          */
-        bool invokeJson(std::string_view stepId, const json& jsonArgs, std::string& error) const;
+        bool invokeJson(std::string_view stepId, const nlohmann::json& jsonArgs, std::string& error) const;
     };
 } // namespace cuke::internal
 

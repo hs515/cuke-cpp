@@ -26,8 +26,18 @@ namespace cuke::internal
         {
             return getWireProtocolHandler().handle(std::string{request});
         }
+        catch(const nlohmann::json::exception& e)
+        {
+            json response = json::array();
+            response.emplace_back("fail");
+            json messageObj;
+            messageObj["message"] = e.what();
+            response.emplace_back(messageObj);
+            return response.dump();
+        }
         catch(const std::runtime_error& e)
         {
+            // Handle WireProtocolHandler-specific errors
             json response = json::array();
             response.emplace_back("fail");
             json messageObj;
