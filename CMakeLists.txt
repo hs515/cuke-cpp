@@ -107,6 +107,9 @@ if(CUKE_CPP_FETCH_DEPS)
     endif()
 
     # Configure cucumber_cpp options before fetching
+    set(CUKE_ENABLE_GTEST ON CACHE BOOL "Enable Google Test framework" FORCE)
+    set(CUKE_ENABLE_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(CUKE_TESTS_UNIT OFF CACHE BOOL "Enable unit tests" FORCE)
     FetchContent_Declare(
         cucumber_cpp
         GIT_REPOSITORY https://github.com/cucumber/cucumber-cpp.git
