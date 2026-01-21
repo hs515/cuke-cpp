@@ -19,45 +19,31 @@ project(cuke_cpp VERSION ${VERSION} LANGUAGES C CXX)
 
 ###
 #
-# Main project check
-#
-###
-set(CUKE_CPP_MAIN_PROJECT OFF)
-
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    set(CUKE_CPP_MAIN_PROJECT ON)
-endif()
-
-###
-#
 # Options
 #
 ###
-if(${CUKE_CPP_MAIN_PROJECT})
-    set(CUKE_CPP_BUILD_TESTS_INIT ON)
-    set(CUKE_CPP_EXPORT_COMPILE_INIT ON)
-else()
-    set(CUKE_CPP_BUILD_TESTS_INIT OFF)
-    set(CUKE_CPP_EXPORT_COMPILE_INIT OFF)
-endif()
-
 option(
     CUKE_CPP_BUILD_TESTS
     "Build the unit tests."
-    ${CUKE_CPP_BUILD_TESTS_INIT}
+    ${CUKE_CPP_BUILD_TESTS}
+)
+
+option(
+    CUKE_CPP_ENABLE_COVERAGE
+    "Enable GCov compile and link."
+    ${CUKE_CPP_ENABLE_COVERAGE}
+)
+
+option(
+    CUKE_CPP_FETCH_DEPS
+    "Fetch dependencies via FetchContent."
+    ${CUKE_CPP_FETCH_DEPS}
 )
 
 option(
     CUKE_CPP_EXPORT_COMPILE
     "Export compile commands."
-    ${CUKE_CPP_EXPORT_COMPILE_INIT}
-)
-
-#set(CUKE_CPP_FETCH_DEPS_INIT ON)
-option(
-    CUKE_CPP_FETCH_DEPS
-    "Fetch dependencies via FetchContent."
-    ${CUKE_CPP_FETCH_DEPS_INIT}
+    ON
 )
 
 ###
@@ -83,6 +69,7 @@ if(CUKE_CPP_FETCH_DEPS)
 
     include(FetchContent)
 
+    # Fetch cucumber-gherkin cpp
     set(CUCUMBER_GHERKIN_FETCH_DEPS ON)
     FetchContent_Declare(
         cucumber_gherkin
@@ -93,27 +80,6 @@ if(CUKE_CPP_FETCH_DEPS)
         SOURCE_SUBDIR "cpp"
     )
     FetchContent_MakeAvailable(cucumber_gherkin)
-
-    # Fetch GTest (required by cucumber_cpp)
-    FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG v1.15.2
-    )
-    # Prevent GTest from overriding compiler/linker options
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
-    
-    # Set GTest variables for find_package compatibility
-    set(GTEST_FOUND TRUE)
-    set(GTEST_INCLUDE_DIR ${googletest_SOURCE_DIR}/googletest/include)
-    set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIR})
-    set(GTEST_LIBRARY gtest)
-    set(GTEST_LIBRARIES gtest)
-    set(GTEST_MAIN_LIBRARY gtest_main)
-    set(GTEST_MAIN_LIBRARIES gtest_main)
-    set(GTEST_BOTH_LIBRARIES gtest gtest_main)
-
     # Fetch Asio (header-only library required by cucumber_cpp)
     FetchContent_Declare(
         asio
@@ -141,10 +107,6 @@ if(CUKE_CPP_FETCH_DEPS)
     endif()
 
     # Configure cucumber_cpp options before fetching
-    set(CUKE_ENABLE_GTEST ON CACHE BOOL "Enable Google Test framework" FORCE)
-    set(CUKE_ENABLE_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
-    set(CUKE_TESTS_UNIT OFF CACHE BOOL "Enable unit tests" FORCE)
-    
     FetchContent_Declare(
         cucumber_cpp
         GIT_REPOSITORY https://github.com/cucumber/cucumber-cpp.git
@@ -153,6 +115,7 @@ if(CUKE_CPP_FETCH_DEPS)
     )
     FetchContent_MakeAvailable(cucumber_cpp)
 
+    # Fetch cucumber-tag-expressions cpp
     FetchContent_Declare(
         cucumber_tag_expressions
         GIT_REPOSITORY https://github.com/hs515/tag-expressions.git
@@ -175,7 +138,7 @@ message(STATUS "cucumber_cpp binary directory is: ${cucumber_cpp_BINARY_DIR}")
 # Targets
 #
 ###
-add_subdirectory(src/lib)
+add_subdirectory(src)
 add_subdirectory(examples)
 
 # ###

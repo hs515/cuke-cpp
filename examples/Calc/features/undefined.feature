@@ -1,3 +1,4 @@
+@ftag
 Feature: test
 
 Scenario: Process a JSON request

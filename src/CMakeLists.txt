@@ -4,31 +4,37 @@ add_library(cucumber::cukecpp ALIAS cukecpp_lib)
 add_library(cukecpp_lib_nomain)
 add_library(cucumber::cukecpp_nomain ALIAS cukecpp_lib_nomain)
 
-set(CUKE_CPP_LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-file(GLOB_RECURSE CUKE_CPP_LIB_SOURCES "${CUKE_CPP_LIB_SRC_DIR}/*.[ch]pp")
-list(APPEND CUKE_CPP_LIB_ALL_SOURCES ${CUKE_CPP_LIB_SOURCES})
+# Apply coverage flags to library
+if(CUKE_CPP_ENABLE_COVERAGE)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(cukecpp_lib PRIVATE -fprofile-arcs -ftest-coverage --coverage -O0 -g)
+        target_link_options(cukecpp_lib PRIVATE -fprofile-arcs -ftest-coverage --coverage)
+        target_compile_options(cukecpp_lib_nomain PRIVATE -fprofile-arcs -ftest-coverage --coverage -O0 -g)
+        target_link_options(cukecpp_lib_nomain PRIVATE -fprofile-arcs -ftest-coverage --coverage)
+    endif()
+endif()
 
 set(CUKE_CPP_LIB_SOURCES
-    ConsoleReporter.cpp
-    ConsoleReporter.hpp
-    CukeDocument.cpp
-    CukeDocument.hpp
-    CukeRunner.cpp
-    CukeRunner.hpp
-    CukeServer.cpp
-    CukeServer.hpp
-    CukeUtilities.cpp
-    CukeUtilities.hpp
-    EventListener.cpp
-    EventListener.hpp
-    FilterTagOptions.cpp
-    FilterTagOptions.hpp
-    HtmlReporter.cpp
-    HtmlReporter.hpp
-    JsonReporter.cpp
-    JsonReporter.hpp
-    ReporterOptions.cpp
-    ReporterOptions.hpp
+    lib/ConsoleReporter.cpp
+    lib/ConsoleReporter.hpp
+    lib/CukeDocument.cpp
+    lib/CukeDocument.hpp
+    lib/CukeRunner.cpp
+    lib/CukeRunner.hpp
+    lib/CukeServer.cpp
+    lib/CukeServer.hpp
+    lib/CukeUtilities.cpp
+    lib/CukeUtilities.hpp
+    lib/EventListener.cpp
+    lib/EventListener.hpp
+    lib/FilterTagOptions.cpp
+    lib/FilterTagOptions.hpp
+    lib/HtmlReporter.cpp
+    lib/HtmlReporter.hpp
+    lib/JsonReporter.cpp
+    lib/JsonReporter.hpp
+    lib/ReporterOptions.cpp
+    lib/ReporterOptions.hpp
 )
 
 target_sources(
@@ -42,7 +48,7 @@ target_include_directories(
     PUBLIC
         $<BUILD_INTERFACE:${CUKE_CPP_LIB_INC_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cucumber>
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib
         ${cucumber_cpp_SOURCE_DIR}/include
         ${cucumber_cpp_BINARY_DIR}/src # for generated export files, e.g., CukeCppExport.hpp
 )
@@ -68,7 +74,7 @@ set_target_properties(
 target_sources(
     cukecpp_lib
     PRIVATE
-        main.cpp
+        lib/main.cpp
 )
 
 target_link_libraries(
@@ -86,3 +92,4 @@ set_target_properties(
         EXPORT_NAME cukecpp
         OUTPUT_NAME cukecpp
 )
+
