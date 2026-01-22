@@ -29,12 +29,13 @@ jobs:
           cd examples/Calc
           ../../build/examples/Calc/GTestCalculatorSteps --help || true
           ../../build/examples/Calc/GTestCalculatorSteps --feature features/addition.feature -V || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features/undefined.feature -V || true
           ../../build/examples/Calc/GTestCalculatorSteps --feature features/step_definitions -V || true
           ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html || true
-          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "@ftag" || true
-          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "not @ftag" || true
-          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "@stag" || true
-          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "not @stag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --tags "@ftag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features --json --tags "not @ftag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features --html --tags "@stag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --html --tags "not @stag" || true
       - name: Generate coverage reports with gcov
         run: |
           find build -name "*.gcda" -type f -exec gcov -p {} \;

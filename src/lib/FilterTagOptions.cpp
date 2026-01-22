@@ -44,18 +44,10 @@ namespace cuke::internal
 
     bool FilterTagOptions::evaluate(const std::vector<std::string>& tags) const
     {
-        for (const auto& expr : myFilterExpressions)
-        {
-            if (!expr->evaluate(tags))
-            {
-                return false;
-            }
-        }
-        return true;
-        // return std::all_of(
-        //     myFilterExpressions.begin(),
-        //     myFilterExpressions.end(),
-        //     [&tags](const TagExpression& expr) { return expr->evaluate(tags); }
-        // );
+        return std::all_of(
+            myFilterExpressions.begin(),
+            myFilterExpressions.end(),
+            [&tags](const TagExpression& expr) { return expr->evaluate(tags); }
+        );
     }
 } // namespace cuke::internal
