@@ -12,6 +12,9 @@ if(CUKE_CPP_ENABLE_COVERAGE)
         target_compile_options(cukecpp_lib_nomain PRIVATE -fprofile-arcs -ftest-coverage --coverage -O0 -g)
         target_link_options(cukecpp_lib_nomain PRIVATE -fprofile-arcs -ftest-coverage --coverage)
     endif()
+
+    target_link_libraries(cukecpp_lib PRIVATE gcov)
+    target_link_libraries(cukecpp_lib_nomain PRIVATE gcov)
 endif()
 
 set(CUKE_CPP_LIB_SOURCES
