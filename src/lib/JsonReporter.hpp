@@ -20,7 +20,6 @@ namespace cuke::internal
         void executionEnd() override;
         void featureBegin(const CukeFeature& feature) override;
         void featureEnd(const CukeFeature& feature) override;
-        void featureSkip(const CukeFeature& feature) override;
         void scenarioBegin(const CukeScenario& scenario) override;
         void scenarioEnd(const CukeScenario& scenario) override;
         void scenarioSkip(const CukeScenario& scenario) override;
@@ -40,7 +39,6 @@ namespace cuke::internal
         json* myStepNodePtr = nullptr;
         int myPassedFeatures = 0;
         int myFailedFeatures = 0;
-        int mySkippedFeatures = 0;
         int myFeaturePassedScenarios = 0;
         int myFeatureFailedScenarios = 0;
         int myFeatureSkippedScenarios = 0;

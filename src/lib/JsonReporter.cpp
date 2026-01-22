@@ -40,7 +40,6 @@ void JsonReporter::executionEnd()
     myJson["duration"] = myJson["end_time"].get<uint64_t>() - myJson["start_time"].get<uint64_t>();
     myJson["passed"] = myPassedFeatures;
     myJson["failed"] = myFailedFeatures;
-    myJson["skipped"] = mySkippedFeatures;
 
     dumpReport();
 }
@@ -89,12 +88,6 @@ void JsonReporter::featureEnd(const CukeFeature& feature)
 
     if (CucumberExecutionStatus::passed == feature.status) myPassedFeatures++; 
     else if (CucumberExecutionStatus::failed == feature.status) myFailedFeatures++; 
-}
-
-void JsonReporter::featureSkip(const CukeFeature& feature)
-{
-    mySkippedFeatures++;
-    myFeatureSkippedScenarios = feature.scenarios.size();
 }
 
 void JsonReporter::scenarioBegin(const CukeScenario& scenario)

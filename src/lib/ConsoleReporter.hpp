@@ -29,7 +29,6 @@ namespace cuke::internal
         void executionEnd() override;
         void featureBegin(const CukeFeature& feature) override;
         void featureEnd(const CukeFeature& feature) override;
-        void featureSkip(const CukeFeature& feature) override;
         void scenarioBegin(const CukeScenario& scenario) override;
         void scenarioEnd(const CukeScenario& scenario) override;
         void scenarioSkip(const CukeScenario& scenario) override;

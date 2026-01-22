@@ -84,11 +84,6 @@ void ConsoleReporter::featureEnd(const CukeFeature& feature)
     // Do nothing
 }
 
-void ConsoleReporter::featureSkip(const CukeFeature& feature)
-{
-    // Do nothing
-}
-
 void ConsoleReporter::scenarioBegin(const CukeScenario& scenario)
 {
     std::cout << Indent(2) << BOLD << "Scenario: " << scenario.name << RST << std::endl;

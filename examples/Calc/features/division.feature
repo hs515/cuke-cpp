@@ -1,5 +1,4 @@
 # language: en
-  @wip
 Feature: Division
   In order to avoid silly mistakes
   Cashiers must be able to calculate a fraction

@@ -17,6 +17,7 @@ namespace cuke::internal
         void buildFeature(CukeFeature& feature, const cms::feature& msgFeature);
         void buildScenario(CukeScenario& scenario, const cms::pickle& pickle);
         void buildStep(CukeStep& step, const cms::pickle_step& pickleStep);
+        void buildStepArgument(CukeStep& step, const cms::pickle_step_argument& argument);
 
         void buildFeature(CukeFeature& feature, const cms::gherkin_document& gherkinDocument)
         {
@@ -69,35 +70,40 @@ namespace cuke::internal
 
             if (pickleStep.argument.has_value())
             {
-                const auto& argument = pickleStep.argument.value();
-                if (argument.data_table.has_value())
-                {
-                    CucumberTableArg tableArg;
-                    const auto& msgTable = argument.data_table.value();
-                    for (const auto& msgRow : msgTable.rows)
-                    {
-                        std::vector<std::string> tableRow;
-                        for (const auto& msgCell : msgRow.cells)
-                        {
-                            tableRow.emplace_back(msgCell.value);
-                        }
-                        tableArg.emplace_back(tableRow);
-                    }
-                    step.arg_type = CucumberArgumentType::DataTable;
-                    step.data_table_arg = tableArg;
-                }
-                else if (argument.doc_string.has_value())
-                {
-                    const auto& msgDocString = argument.doc_string.value();
-                    step.arg_type = CucumberArgumentType::DocString;
-                    step.doc_string_arg = msgDocString.content;
-                }
+                buildStepArgument(step, pickleStep.argument.value());
             }
             else
             {
                 step.arg_type = CucumberArgumentType::NoArgument;
             }
         }
+
+        void buildStepArgument(CukeStep& step, const cms::pickle_step_argument& argument)
+        {
+            if (argument.data_table.has_value())
+            {
+                CucumberTableArg tableArg;
+                const auto& msgTable = argument.data_table.value();
+                for (const auto& msgRow : msgTable.rows)
+                {
+                    std::vector<std::string> tableRow;
+                    for (const auto& msgCell : msgRow.cells)
+                    {
+                        tableRow.emplace_back(msgCell.value);
+                    }
+                    tableArg.emplace_back(tableRow);
+                }
+                step.arg_type = CucumberArgumentType::DataTable;
+                step.data_table_arg = tableArg;
+            }
+            else if (argument.doc_string.has_value())
+            {
+                const auto& msgDocString = argument.doc_string.value();
+                step.arg_type = CucumberArgumentType::DocString;
+                step.doc_string_arg = msgDocString.content;
+            }
+        }
+
     } // namespace
 
     void CukeDocument::parseFeatureFile(std::string_view filename)

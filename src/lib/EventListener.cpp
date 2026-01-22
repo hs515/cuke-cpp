@@ -55,14 +55,6 @@ void EventListener::featureEnd(const CukeFeature& feature)
     }
 }
 
-void EventListener::featureSkip(const CukeFeature& feature)
-{
-    for (const auto& listener : myListeners)
-    {
-        listener->featureSkip(feature);
-    }
-}
-
 void EventListener::scenarioBegin(const CukeScenario& scenario)
 {
     for (const auto& listener : myListeners)

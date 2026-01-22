@@ -15,36 +15,14 @@ namespace cuke::internal
         {
             static CukeEngineImpl engine_;
             static JsonWireMessageCodec codec_;
-            static WireProtocolHandler instance = WireProtocolHandler(codec_, engine_);
+            static auto instance = WireProtocolHandler(codec_, engine_);
             return instance;
         }
     } // namespace
 
     std::string CukeServer::handle(std::string_view request) const
     {
-        try
-        {
-            return getWireProtocolHandler().handle(std::string{request});
-        }
-        catch(const nlohmann::json::exception& e)
-        {
-            json response = json::array();
-            response.emplace_back("fail");
-            json messageObj;
-            messageObj["message"] = e.what();
-            response.emplace_back(messageObj);
-            return response.dump();
-        }
-        catch(const std::runtime_error& e)
-        {
-            // Handle WireProtocolHandler-specific errors
-            json response = json::array();
-            response.emplace_back("fail");
-            json messageObj;
-            messageObj["message"] = e.what();
-            response.emplace_back(messageObj);
-            return response.dump();
-        }
+        return getWireProtocolHandler().handle(std::string{request});
     }
 
     std::string CukeServer::stepMatch(std::string_view stepText) const

@@ -4,7 +4,6 @@ Feature: Addition
   As a math idiot 
   I want to be told the sum of two numbers
 
-  @stag
   Scenario Outline: Add two numbers
     Given I have entered <input_1> into the calculator
     And I have entered <input_2> into the calculator

@@ -36,33 +36,14 @@ bool CukeRunner::runFeature(CukeFeature& feature)
     beginFeature(feature);
 
     bool runningOk = true;
-    if (!myFilterTags.evaluate(feature.tags))
+    for (auto&& scenario : feature.scenarios)
     {
-        skipFeature(feature);
+        runningOk = runScenario(scenario) && runningOk;
     }
-    else
-    {
-        for (auto&& scenario : feature.scenarios)
-        {
-            runningOk = runScenario(scenario) && runningOk;
-        }
-        feature.status = (runningOk ? CucumberExecutionStatus::passed : CucumberExecutionStatus::failed);
-    }
+    feature.status = (runningOk ? CucumberExecutionStatus::passed : CucumberExecutionStatus::failed);
 
     endFeature(feature);
     return runningOk;
-}
-
-void CukeRunner::skipFeature(CukeFeature& feature)
-{
-    feature.status = CucumberExecutionStatus::skipped;
-    for (auto&& scenario : feature.scenarios)
-    {
-        beginScenario(scenario);
-        skipScenario(scenario);
-        endScenario(scenario);
-    }
-    myEventListener.featureSkip(feature);
 }
 
 void CukeRunner::endFeature(CukeFeature& feature)
@@ -152,7 +133,7 @@ bool CukeRunner::runStep(CukeStep& step)
         step.status = CucumberExecutionStatus::ambiguous;
         std::stringstream ss;
         ss << "Ambiguous step definition matches found:" << "\n";
-        for (auto&& stepInfo : step.step_defs)
+        for (const auto& stepInfo : step.step_defs)
         {
             ss << "  " << stepInfo.source << ": \"" << stepInfo.regexp << "\"\n";
         }
@@ -188,7 +169,7 @@ void CukeRunner::endStep(CukeStep& step)
     myEventListener.stepEnd(step);
 }
 
-bool CukeRunner::invokeStep(CukeStep& step, std::string& error)
+bool CukeRunner::invokeStep(CukeStep& step, std::string& error) const
 {
     auto stepInfo = step.step_defs.at(0);
     bool success = true;
@@ -212,7 +193,7 @@ bool CukeRunner::invokeStep(CukeStep& step, std::string& error)
     return success;
 }
 
-std::string CukeRunner::snippetStep(const CukeStep& step)
+std::string CukeRunner::snippetStep(const CukeStep& step) const
 {
     auto multiLineArg = [&]()
     {
@@ -229,7 +210,7 @@ std::string CukeRunner::snippetStep(const CukeStep& step)
     return myCukeServer.snippetText(step.action, step.text, multiLineArg());
 }
 
-std::vector<CukeStepInfo> CukeRunner::stepMatch(std::string_view stepText)
+std::vector<CukeStepInfo> CukeRunner::stepMatch(std::string_view stepText) const
 {
     json response = json::parse(myCukeServer.stepMatch(stepText));
 

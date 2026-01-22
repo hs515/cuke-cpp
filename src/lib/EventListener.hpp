@@ -15,10 +15,10 @@ namespace cuke::internal
     class EventListenerIF
     {
     public:
+        virtual ~EventListenerIF() = default;
         virtual void executionBegin() = 0;
         virtual void executionEnd() = 0;
         virtual void featureBegin(const CukeFeature& feature) = 0;
-        virtual void featureSkip(const CukeFeature& feature) = 0;
         virtual void featureEnd(const CukeFeature& feature) = 0;
         virtual void scenarioBegin(const CukeScenario& scenario) = 0;
         virtual void scenarioSkip(const CukeScenario& scenario) = 0;
@@ -37,7 +37,6 @@ namespace cuke::internal
         void executionEnd() override;
         void featureBegin(const CukeFeature& feature) override;
         void featureEnd(const CukeFeature& feature) override;
-        void featureSkip(const CukeFeature& feature) override;
         void scenarioBegin(const CukeScenario& scenario) override;
         void scenarioEnd(const CukeScenario& scenario) override;
         void scenarioSkip(const CukeScenario& scenario) override;

@@ -1,5 +1,6 @@
 #include "FilterTagOptions.hpp"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -51,5 +52,10 @@ namespace cuke::internal
             }
         }
         return true;
+        // return std::all_of(
+        //     myFilterExpressions.begin(),
+        //     myFilterExpressions.end(),
+        //     [&tags](const TagExpression& expr) { return expr->evaluate(tags); }
+        // );
     }
 } // namespace cuke::internal

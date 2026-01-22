@@ -34,9 +34,11 @@ namespace cuke::internal
         bool run(std::string_view featureFile);
 
     private:
+        CukeRunner(const CukeRunner&) = delete;
+        CukeRunner& operator=(const CukeRunner&) = delete;
+
         void beginFeature(CukeFeature& feature);
         bool runFeature(CukeFeature& feature);
-        void skipFeature(CukeFeature& feature);
         void endFeature(CukeFeature& feature);
         void beginScenario(CukeScenario& scenario);
         bool runScenario(CukeScenario& scenario);
@@ -46,9 +48,9 @@ namespace cuke::internal
         bool runStep(CukeStep& step);
         void skipStep(CukeStep& step);
         void endStep(CukeStep& step);
-        bool invokeStep(CukeStep& step, std::string& error);
-        std::string snippetStep(const CukeStep& step);
-        std::vector<CukeStepInfo> stepMatch(std::string_view stepText);
+        bool invokeStep(CukeStep& step, std::string& error) const;
+        std::string snippetStep(const CukeStep& step) const;
+        std::vector<CukeStepInfo> stepMatch(std::string_view stepText) const;
 
         CukeServer myCukeServer = CukeServer();
         EventListener myEventListener;

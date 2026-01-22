@@ -28,9 +28,13 @@ jobs:
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/
           cd examples/Calc
           ../../build/examples/Calc/GTestCalculatorSteps --help || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features/addition.feature -V || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features/step_definitions -V || true
           ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html || true
-          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "@ftag or @stag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "@ftag" || true
           ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "not @ftag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "@stag" || true
+          ../../build/examples/Calc/GTestCalculatorSteps --feature features -V --json --html --tags "not @stag" || true
       - name: Generate coverage reports with gcov
         run: |
           find build -name "*.gcda" -type f -exec gcov -p {} \;
