@@ -55,14 +55,14 @@ GIVEN("^I have entered numbers from a multi-line text into the calculator$") {
     }
 }
 
-GIVEN("^I have entered an integer number (\\d+) into the calculator$") {
+GIVEN("I have entered an integer number {double} into the calculator") {
     REGEX_PARAM(double, n);
     ScenarioScope<CalcCtx> context;
 
     context->calc.push(n);
 }
 
-GIVEN("^I have entered an integer number (.*) into the calculator$") {
+GIVEN("^I have entered an integer number (\\d+) into the calculator$") {
     REGEX_PARAM(double, n);
     ScenarioScope<CalcCtx> context;
 

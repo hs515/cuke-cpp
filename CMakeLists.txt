@@ -17,34 +17,33 @@ endif()
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(cuke_cpp VERSION ${VERSION} LANGUAGES C CXX)
 
+# Cpp standard check
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+elseif(CMAKE_CXX_STANDARD LESS 17)
+    message(FATAL_ERROR "C++17 (above) is required")
+endif()
+
 ###
 #
 # Options
 #
 ###
-option(
-    CUKE_CPP_BUILD_TESTS
-    "Build the unit tests."
-    ${CUKE_CPP_BUILD_TESTS}
-)
+option(CUKE_CPP_BUILD_TESTS	"Build the unit tests." OFF)
+option(CUKE_CPP_ENABLE_COVERAGE	"Enable GCov compile and link." OFF)
+option(CUKE_CPP_STRICT          "Additional and more strict checks" OFF)
+option(CUKE_CPP_FETCH_DEPS	"Fetch dependencies via FetchContent." OFF)
+option(CUKE_CPP_EXPORT_COMPILE	"Export compile commands." ON)
 
-option(
-    CUKE_CPP_ENABLE_COVERAGE
-    "Enable GCov compile and link."
-    ${CUKE_CPP_ENABLE_COVERAGE}
-)
+if(CUKE_CPP_ENABLE_COVERAGE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+endif()
 
-option(
-    CUKE_CPP_FETCH_DEPS
-    "Fetch dependencies via FetchContent."
-    ${CUKE_CPP_FETCH_DEPS}
-)
-
-option(
-    CUKE_CPP_EXPORT_COMPILE
-    "Export compile commands."
-    ON
-)
+if(CUKE_CPP_STRICT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+endif()
 
 ###
 # Configuration
@@ -80,31 +79,6 @@ if(CUKE_CPP_FETCH_DEPS)
         SOURCE_SUBDIR "cpp"
     )
     FetchContent_MakeAvailable(cucumber_gherkin)
-    # Fetch Asio (header-only library required by cucumber_cpp)
-    FetchContent_Declare(
-        asio
-        GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
-        GIT_TAG asio-1-30-2
-    )
-    FetchContent_GetProperties(asio)
-    if(NOT asio_POPULATED)
-        FetchContent_Populate(asio)
-        # Asio is header-only, just set the include directory
-        set(ASIO_INCLUDE_DIR ${asio_SOURCE_DIR}/asio/include)
-    endif()
-
-    # Fetch TCLAP (header-only command line parser required by cucumber_cpp)
-    FetchContent_Declare(
-        tclap
-        GIT_REPOSITORY https://github.com/mirror/tclap.git
-        GIT_TAG v1.2.5
-    )
-    FetchContent_GetProperties(tclap)
-    if(NOT tclap_POPULATED)
-        FetchContent_Populate(tclap)
-        # TCLAP is header-only, just set the include directory
-        set(TCLAP_INCLUDE_DIR ${tclap_SOURCE_DIR}/include)
-    endif()
 
     # Configure cucumber_cpp options before fetching
     set(CUKE_ENABLE_GTEST ON CACHE BOOL "Enable Google Test framework" FORCE)
@@ -112,7 +86,7 @@ if(CUKE_CPP_FETCH_DEPS)
     set(CUKE_TESTS_UNIT OFF CACHE BOOL "Enable unit tests" FORCE)
     FetchContent_Declare(
         cucumber_cpp
-        GIT_REPOSITORY https://github.com/cucumber/cucumber-cpp.git
+        GIT_REPOSITORY https://github.com/hs515/cucumber-cpp.git
         GIT_TAG main
         OVERRIDE_FIND_PACKAGE
     )

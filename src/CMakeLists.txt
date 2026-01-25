@@ -4,19 +4,6 @@ add_library(cucumber::cukecpp ALIAS cukecpp_lib)
 add_library(cukecpp_lib_nomain)
 add_library(cucumber::cukecpp_nomain ALIAS cukecpp_lib_nomain)
 
-# Apply coverage flags to library
-if(CUKE_CPP_ENABLE_COVERAGE)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(cukecpp_lib PRIVATE -fprofile-arcs -ftest-coverage --coverage -O0 -g)
-        target_link_options(cukecpp_lib PRIVATE -fprofile-arcs -ftest-coverage --coverage)
-        target_compile_options(cukecpp_lib_nomain PRIVATE -fprofile-arcs -ftest-coverage --coverage -O0 -g)
-        target_link_options(cukecpp_lib_nomain PRIVATE -fprofile-arcs -ftest-coverage --coverage)
-    endif()
-
-    target_link_libraries(cukecpp_lib PRIVATE gcov)
-    target_link_libraries(cukecpp_lib_nomain PRIVATE gcov)
-endif()
-
 set(CUKE_CPP_LIB_SOURCES
     lib/ConsoleReporter.cpp
     lib/ConsoleReporter.hpp
