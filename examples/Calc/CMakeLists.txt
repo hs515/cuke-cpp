@@ -4,7 +4,6 @@ if(CUKE_CPP_BUILD_TESTS)
     add_library(Calc STATIC src/Calculator.cpp)
     target_include_directories(Calc INTERFACE src)
 
-    find_package(GTest QUIET)
     if(TARGET GTest::gtest)
         add_executable(GTestCalculatorSteps features/step_definitions/GTestCalculatorSteps.cpp)
         target_link_libraries(GTestCalculatorSteps PRIVATE Calc cucumber::cukecpp GTest::gtest)

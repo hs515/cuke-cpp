@@ -45,6 +45,93 @@ if(CUKE_CPP_STRICT)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()
 
+option(CUKE_ENABLE_BOOST_TEST   "Enable Boost.Test framework" OFF)
+option(CUKE_ENABLE_GTEST        "Enable Google Test framework" OFF)
+option(CUKE_ENABLE_QT_5         "Enable Qt5 framework" OFF)
+option(CUKE_ENABLE_QT_6         "Enable Qt6 framework" OFF)
+
+#
+# Check that at least one test framework is enabled
+#
+
+set(CUKE_TEST_FRAMEWORKS
+    CUKE_ENABLE_BOOST_TEST
+    CUKE_ENABLE_GTEST
+    CUKE_ENABLE_QT_5
+    CUKE_ENABLE_QT_6
+)
+
+set(TEST_FRAMEWORK_FOUND FALSE)
+foreach(test_framework ${CUKE_TEST_FRAMEWORKS})
+    if(${test_framework})
+        set(TEST_FRAMEWORK_FOUND TRUE)
+    endif()
+endforeach()
+
+if(NOT TEST_FRAMEWORK_FOUND)
+    message(WARNING "No test framework enabled. At least one should be enabled. Options are: ${CUKE_TEST_FRAMEWORKS}.")
+endif()
+
+#
+# Boost
+#
+
+set(Boost_USE_STATIC_RUNTIME OFF)
+if(CUKE_ENABLE_BOOST_TEST)
+    # "An external test runner utility is required to link with dynamic library" (Boost User's Guide)
+    set(CMAKE_CXX_FLAGS "-DBOOST_TEST_DYN_LINK ${CMAKE_CXX_FLAGS}")
+    find_package(Boost 1.70 COMPONENTS unit_test_framework REQUIRED)
+endif()
+
+#
+# GTest
+#
+
+if(CUKE_ENABLE_GTEST)
+    find_package(GTest 1.11.0 REQUIRED)
+endif()
+
+#
+# Qt
+#
+
+if(CUKE_ENABLE_QT_5 AND CUKE_ENABLE_QT_6)
+    message(FATAL_ERROR "Qt version 5 and 6 enabled, please select at most one")
+endif()
+
+
+if(CUKE_ENABLE_QT_5)
+    find_package(Qt5 REQUIRED COMPONENTS
+        Core
+        Gui
+        Widgets
+        Test
+    )
+
+    message(STATUS "Found Qt version: ${Qt5Core_VERSION_STRING}")
+    if(Qt5Core_VERSION_STRING VERSION_LESS 5.15.0)
+        add_library(Qt::Core    INTERFACE IMPORTED)
+        add_library(Qt::Gui     INTERFACE IMPORTED)
+        add_library(Qt::Widgets INTERFACE IMPORTED)
+        add_library(Qt::Test    INTERFACE IMPORTED)
+        set_target_properties(Qt::Core    PROPERTIES INTERFACE_LINK_LIBRARIES Qt5::Core   )
+        set_target_properties(Qt::Gui     PROPERTIES INTERFACE_LINK_LIBRARIES Qt5::Gui    )
+        set_target_properties(Qt::Widgets PROPERTIES INTERFACE_LINK_LIBRARIES Qt5::Widgets)
+        set_target_properties(Qt::Test    PROPERTIES INTERFACE_LINK_LIBRARIES Qt5::Test   )
+    endif()
+endif()
+
+if(CUKE_ENABLE_QT_6)
+    find_package(Qt6 REQUIRED COMPONENTS
+        Core
+        Gui
+        Widgets
+        Test
+    )
+
+    message(STATUS "Found Qt version: ${Qt6Core_VERSION}")
+endif()
+
 ###
 # Configuration
 #
@@ -81,7 +168,6 @@ if(CUKE_CPP_FETCH_DEPS)
     FetchContent_MakeAvailable(cucumber_gherkin)
 
     # Configure cucumber_cpp options before fetching
-    set(CUKE_ENABLE_GTEST ON CACHE BOOL "Enable Google Test framework" FORCE)
     set(CUKE_ENABLE_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
     set(CUKE_TESTS_UNIT OFF CACHE BOOL "Enable unit tests" FORCE)
     FetchContent_Declare(

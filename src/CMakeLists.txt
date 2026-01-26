@@ -37,10 +37,10 @@ target_include_directories(
     cukecpp_lib_nomain
     PUBLIC
         $<BUILD_INTERFACE:${CUKE_CPP_LIB_INC_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lib>
+        $<BUILD_INTERFACE:${cucumber_cpp_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${cucumber_cpp_SOURCE_DIR}/src> # for generated export files, e.g., CukeExport.hpp
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cucumber>
-        ${CMAKE_CURRENT_SOURCE_DIR}/lib
-        ${cucumber_cpp_SOURCE_DIR}/include
-        ${cucumber_cpp_BINARY_DIR}/src # for generated export files, e.g., CukeCppExport.hpp
 )
 
 target_link_libraries(
@@ -81,5 +81,36 @@ set_target_properties(
         SOVERSION ${VER_MAJOR}
         EXPORT_NAME cukecpp
         OUTPUT_NAME cukecpp
+)
+
+git_get_version(CUKE_VERSION)
+message(STATUS "Version: ${CUKE_VERSION}")
+target_compile_definitions(cukecpp_lib PRIVATE
+    CUKE_VERSION="${CUKE_VERSION}"
+)
+
+#include(GNUInstallDirs)
+#install(
+#    FILES
+#        "$<BUILD_INTERFACE:${cucumber_cpp_SOURCE_DIR}/src>/cucumber-cpp/internal/CukeExport.hpp"
+#    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cucumber-cpp/internal"
+#)
+
+install(
+    TARGETS
+    	cukecpp_lib
+        cukecpp_lib_nomain
+        cucumber-cpp-internal
+    EXPORT   CukeCpp
+    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(
+    EXPORT      CukeCpp
+    NAMESPACE   CukeCpp::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
+    FILE        CukeCppConfig.cmake
 )
 

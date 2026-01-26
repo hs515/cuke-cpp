@@ -24,7 +24,7 @@ jobs:
       - name: Run Build Wrapper
         run: |
           mkdir build
-          cmake -S . -B build -DCUKE_CPP_BUILD_TESTS=ON -DCUKE_CPP_ENABLE_COVERAGE=ON -DCUKE_CPP_FETCH_DEPS=ON -DCUKE_CPP_STRICT=ON
+          cmake -S . -B build -DCUKE_CPP_BUILD_TESTS=ON -DCUKE_CPP_ENABLE_COVERAGE=ON -DCUKE_CPP_FETCH_DEPS=ON -DCUKE_CPP_STRICT=ON -DCUKE_ENABLE_GTEST=ON
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/
           cd examples/Calc
           ../../build/examples/Calc/GTestCalculatorSteps --help || true
