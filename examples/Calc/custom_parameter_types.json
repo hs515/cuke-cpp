@@ -1,0 +1,10 @@
+[
+    {
+        "name": "color",
+        "regexp": "red|orange|yellow|green|blue"
+    },
+    {
+        "name": "fruit",
+        "regexp": "apple|banana|orange"
+    }
+]

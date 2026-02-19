@@ -14,6 +14,9 @@ Feature: Ambiguous Addition
 
   Scenario Outline: Add numbers in a string
     Given I have entered numbers from the below number 10 into the calculator
+      """
+        1 2 3 4 5 6 7 8 9 10
+      """
     And I have entered numbers from the below number 10 into the calculator
     When I press add
     Then the result should be 20 on the screen

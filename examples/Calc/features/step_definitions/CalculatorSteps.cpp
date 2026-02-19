@@ -68,3 +68,16 @@ GIVEN("^I have entered an integer number (\\d+) into the calculator$") {
 
     context->calc.push(n);
 }
+
+GIVEN("I have entered a(n)/one {fruit} into the calculator") {
+    REGEX_PARAM(std::string, fruit);
+    ScenarioScope<CalcCtx> context;
+
+    if (fruit == "apple") {
+        context->calc.push(5);
+    } else if (fruit == "banana") {
+        context->calc.push(8);
+    } else if (fruit == "orange") {
+        context->calc.push(3);
+    }
+}
